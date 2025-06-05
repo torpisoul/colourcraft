@@ -3,234 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ColourCraft Fun!</title> <!-- Changed title -->
+    <title>ColourCraft Fun!</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Moved handleToneLoadError definition before the script tag -->
     <script>
-        // --- Global flag for Tone.js load failure ---
         let tonejsLoadFailed = false;
         function handleToneLoadError() {
             console.error("CRITICAL: Tone.js script failed to load from CDN!");
             tonejsLoadFailed = true; 
-            // The attemptPageSetup function will handle UI updates based on this flag.
         }
     </script>
     <script src="https://unpkg.com/tone@14.7.77/build/Tone.js" onerror="handleToneLoadError()"></script>
+    <script>
+        // Immediate check after script tag
+        if (typeof Tone !== 'undefined') {
+            console.log("Tone.js object IS defined immediately after script tag.");
+        } else {
+            console.error("Tone.js object is UNDEFINED immediately after script tag.");
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
             overscroll-behavior: none; 
-            background-color: #f0f9ff; /* sky-50 */
-            color: #374151; /* gray-700 */
-            overflow: hidden; /* Hide scrollbars during play button overlay */
+            background-color: #f0f9ff; 
+            color: #374151; 
         }
 
-        /* Play Button Overlay */
         #play-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(14, 165, 233, 0.8); /* sky-500 with opacity */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(14, 165, 233, 0.8); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; backdrop-filter: blur(5px);
         }
         #play-button {
-            font-family: 'Fredoka One', cursive;
-            font-size: 3rem; /* text-5xl */
-            padding: 1.5rem 3rem; /* p-6 p-12 */
-            background-image: linear-gradient(to right, #facc15 0%, #eab308 50%, #ca8a04 100%); /* yellow-400 to yellow-600 */
-            color: #78350f; /* amber-900 */
-            border: none;
-            border-radius: 24px; /* rounded-3xl */
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2), 0 0 0 5px white, 0 0 0 10px #fde047; /* yellow-300 */
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            transform: scale(1);
+            font-family: 'Fredoka One', cursive; font-size: 3rem; 
+            padding: 1.5rem 3rem; 
+            background-image: linear-gradient(to right, #facc15 0%, #eab308 50%, #ca8a04 100%); 
+            color: #78350f; 
+            border: none; border-radius: 24px; 
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2), 0 0 0 5px white, 0 0 0 10px #fde047; 
+            cursor: pointer; transition: all 0.2s ease-in-out; transform: scale(1);
         }
-        #play-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.3), 0 0 0 5px white, 0 0 0 10px #fef08a; /* yellow-200 */
-        }
-        #play-button:active {
-            transform: scale(1.05);
-        }
+        #play-button:hover { transform: scale(1.1); box-shadow: 0 12px 20px rgba(0,0,0,0.3), 0 0 0 5px white, 0 0 0 10px #fef08a; }
+        #play-button:active { transform: scale(1.05); }
         #play-button:disabled {
-            background-image: linear-gradient(to right, #a1a1aa 0%, #71717a 50%, #52525b 100%); /* zinc-500 to zinc-600 */
-            color: #e4e4e7; /* zinc-200 */
-            cursor: not-allowed;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-image: linear-gradient(to right, #a1a1aa 0%, #71717a 50%, #52525b 100%); 
+            color: #e4e4e7; cursor: not-allowed; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .play-overlay-title {
-            font-family: 'Fredoka One', cursive;
-            color: white;
-            font-size: 2.5rem; /* text-4xl */
-            text-shadow: 2px 2px 0px #0c4a6e; /* cyan-800 */
-            margin-bottom: 2rem;
+            font-family: 'Fredoka One', cursive; color: white; font-size: 2.5rem; 
+            text-shadow: 2px 2px 0px #0c4a6e; margin-bottom: 2rem;
         }
 
+        #game-header {
+            position: sticky;
+            top: 0;
+            z-index: 50; 
+            background-color: #f0f9ff; 
+            padding-top: 0.5rem; 
+            padding-bottom: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
 
         .game-title {
             font-family: 'Fredoka One', cursive;
-            color: #0ea5e9; /* sky-500 */
-            text-shadow: 2px 2px 0px #ffffff, 4px 4px 0px #7dd3fc; /* sky-300 */
+            text-shadow: 2px 2px 0px #ffffff, 4px 4px 0px #7dd3fc; 
+            /* animation: pulseTitleShadow 2s infinite ease-in-out;  Alternative pulse */
+        }
+        .game-title span { 
+            display: inline-block; 
+            transition: color 0.3s ease-in-out, transform 0.2s ease-out;
+            animation: pulseLetter 2s infinite ease-in-out; /* Individual letter pulse */
+        }
+         @keyframes pulseLetter { /* More subtle pulse for letters */
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% {  transform: translateY(-1px) scale(1.02); }
         }
 
+
         .fun-button {
-            background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 50%, #2563eb 100%); /* blue-400 to blue-600 */
-            color: white;
-            border-radius: 9999px; /* pill shape */
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
+            background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 50%, #2563eb 100%); 
+            color: white; border-radius: 9999px; 
+            padding: 0.75rem 1.5rem; font-weight: 600;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
-            transition: all 0.2s ease-in-out;
-            border: 2px solid white;
+            transition: all 0.2s ease-in-out; border: 2px solid white;
         }
         .fun-button:hover {
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 8px 12px rgba(0,0,0,0.15), 0 4px 6px rgba(0,0,0,0.1);
         }
-        .fun-button.active {
-            background-image: linear-gradient(to right, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-            transform: translateY(1px);
+        .fun-button.active { 
+            background-image: linear-gradient(to right, #fde047 0%, #facc15 50%, #eab308 100%); 
+            color: #713f12; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.25), 0 0 0 3px #fde047; 
+            transform: translateY(1px) scale(1.01);
         }
 
         .game-area-card {
-            background-color: #ffffff;
-            border-radius: 24px; /* rounded-3xl */
-            padding: 1.5rem; /* p-6 */
-            box-shadow: 0 10px 20px rgba(125, 211, 252, 0.3), 0 6px 6px rgba(125, 211, 252, 0.2); /* sky-300 shadows */
+            background-color: #ffffff; border-radius: 24px; 
+            padding: 1rem; 
+            box-shadow: 0 10px 20px rgba(125, 211, 252, 0.3), 0 6px 6px rgba(125, 211, 252, 0.2); 
         }
         
-        .mixing-pot-area { /* Used for Explore and Puzzle */
-            background-color: #e0f2fe; /* sky-100 */
-            border-radius: 16px; /* rounded-xl */
-            padding: 1rem;
+        .mixing-pot-area { 
+            background-color: #e0f2fe; border-radius: 16px; padding: 1rem;
         }
 
-        /* New Creative Mode Mixing Area */
         #creative-mixing-canvas {
-            width: 100%;
-            max-width: 220px; 
-            height: 220px;    
-            margin: 0.5rem auto; 
-            background-color: #e2e8f0; 
-            border-radius: 24px; 
-            box-shadow: inset 0 4px 8px rgba(0,0,0,0.15);
-            cursor: crosshair; 
-            border: 4px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.125rem; 
-            color: #64748b; 
-            font-weight: 600;
+            width: 100%; max-width: 220px; height: 220px;    
+            margin: 0.5rem auto; background-color: #e2e8f0; 
+            border-radius: 24px; box-shadow: inset 0 4px 8px rgba(0,0,0,0.15);
+            cursor: crosshair; border: 4px solid white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.125rem; color: #64748b; font-weight: 600;
         }
          #creative-mixing-canvas.dragging-over {
             box-shadow: inset 0 0 15px #fbbf24, 0 0 10px #fbbf24; 
         }
 
-
         .drop-slot, .result-pot {
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-            border: 4px solid white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border: 4px solid white;
         }
-        .drop-slot {
-            background-color: #cbd5e1; /* slate-300 */
-        }
-        .drop-slot.filled {
-             box-shadow: 0 0 10px currentColor, inset 0 2px 4px rgba(0,0,0,0.2);
-        }
+        .drop-slot { background-color: #cbd5e1; }
+        .drop-slot.filled { box-shadow: 0 0 10px currentColor, inset 0 2px 4px rgba(0,0,0,0.2); }
 
-        .result-pot {
-            background-color: #94a3b8; /* slate-400 */
-            color: white;
-            font-size: 1.125rem; /* text-lg */
-        }
-        .result-pot.active-mix {
-            transform: scale(1.1);
-        }
+        .result-pot { background-color: #94a3b8; color: white; font-size: 1.125rem; }
+        .result-pot.active-mix { transform: scale(1.1); }
 
         .color-swatch-draggable {
-            border-radius: 50%;
-            cursor: grab;
+            border-radius: 50%; cursor: grab;
             transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            border: 3px solid white;
-            font-weight: 600; 
-            font-size: 0.875rem; 
-            line-height: 1.25rem; 
-            padding: 0.25rem; 
-            text-align: center;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 3px solid white;
+            font-weight: 600; font-size: 0.875rem; line-height: 1.25rem; 
+            padding: 0.25rem; text-align: center;
+            display: flex; align-items: center; justify-content: center; 
         }
-        .color-swatch-draggable:active {
-            cursor: grabbing;
-            transform: scale(1.15);
-            z-index: 100;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .color-swatch-draggable.parent-highlight {
-            box-shadow: 0 0 15px 5px #fde047, 0 0 0 3px #facc15; 
-            transform: scale(1.05);
-        }
+        .color-swatch-draggable:active { cursor: grabbing; transform: scale(1.15); z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .color-swatch-draggable.parent-highlight { box-shadow: 0 0 15px 5px #fde047, 0 0 0 3px #facc15; transform: scale(1.05); }
 
-
-        .palette-container {
-            background-color: #e0f2fe; /* sky-100 */
-            border-radius: 16px; /* rounded-xl */
-            padding: 1rem;
-        }
-        .palette-title {
-            font-family: 'Fredoka One', cursive;
-            color: #0369a1; /* sky-700 */
-        }
-        #palette-grid {
+        .palette-container { background-color: #e0f2fe; border-radius: 16px; padding: 1rem; }
+        .palette-title { font-family: 'Fredoka One', cursive; color: #0369a1; }
+        #palette-grid { 
             justify-items: center; 
+            max-height: 200px; 
+            overflow-y: auto;  
         }
+        #palette-grid::-webkit-scrollbar { width: 8px; }
+        #palette-grid::-webkit-scrollbar-track { background: #e0f2fe; border-radius: 4px; }
+        #palette-grid::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        #palette-grid::-webkit-scrollbar-thumb:hover { background: #2563eb; }
 
-        @keyframes popIn {
-            0% { transform: scale(0.5) rotate(-15deg); opacity: 0; }
-            70% { transform: scale(1.1) rotate(5deg); opacity: 1; }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-        .animate-popIn { animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
 
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 10px currentColor, 0 0 20px currentColor, inset 0 2px 4px rgba(0,0,0,0.2), 4px 4px 0px white; }
-            50% { box-shadow: 0 0 15px currentColor, 0 0 30px currentColor, inset 0 2px 4px rgba(0,0,0,0.2), 4px 4px 0px white; }
-        }
-        .animate-pulseGlow { animation: pulseGlow 1.2s ease-in-out; }
+        @keyframes popIn { /* ... (same) ... */ } .animate-popIn { animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+        @keyframes pulseGlow { /* ... (same) ... */ } .animate-pulseGlow { animation: pulseGlow 1.2s ease-in-out; }
+        .dragging-over { transform: scale(1.1); border-color: #fbbf24 !important; box-shadow: inset 0 0 10px #fbbf24, 0 0 10px #fbbf24 !important; }
         
-        .dragging-over {
-            transform: scale(1.1);
-            border-color: #fbbf24 !important; 
-            box-shadow: inset 0 0 10px #fbbf24, 0 0 10px #fbbf24 !important;
+        #game-content-wrapper {
+            padding-top: 1rem; 
         }
-        
-        html, body.game-active { overflow: auto; }
-        .game-container-full-height { min-height: 100vh; }
         .hidden-by-overlay { display: none !important; }
         .hidden { display: none !important; } 
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
-        .sr-only { 
-            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+        #score-area {
+            font-family: 'Fredoka One', cursive;
+            color: #0ea5e9; 
+            text-align: center;
+            font-size: 1.5rem; 
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        #puzzle-timer {
+            text-align: center; 
         }
     </style>
 </head>
@@ -240,28 +187,30 @@
         <h2 id="play-overlay-title" class="play-overlay-title">Get Ready to Mix!</h2>
         <button id="play-button">PLAY!</button>
     </div>
-
-    <div id="game-content" class="hidden-by-overlay">
-        <div id="game-container" class="game-container-full-height flex flex-col items-center justify-center p-2 sm:p-4 select-none">
-            <h1 class="game-title text-4xl sm:text-5xl font-bold mb-4 sm:mb-6 text-center">ColourCraft</h1> <!-- Changed title -->
-
-            <div id="mode-selection" class="mb-4 sm:mb-6 flex space-x-2 sm:space-x-4">
+    
+    <div id="game-content-wrapper" class="hidden-by-overlay">
+        <header id="game-header">
+            <h1 id="main-title" class="game-title text-4xl sm:text-5xl font-bold text-center">ColourCraft</h1> 
+            <div id="mode-selection" class="mt-2 mb-4 flex justify-center space-x-2 sm:space-x-4">
                 <button id="creative-mode-btn" class="fun-button active">Creative</button> 
                 <button id="explore-mode-btn" class="fun-button">Explore</button>
                 <button id="puzzle-mode-btn" class="fun-button">Puzzle</button>
             </div>
+        </header>
 
+        <div id="game-container" class="flex flex-col items-center justify-center p-2 sm:p-4 select-none">
             <div id="game-area" class="game-area-card w-full max-w-lg sm:max-w-xl md:max-w-2xl">
+                <div id="score-area" class="hidden">Score: <span id="score-value">0</span></div>
                 
                 <div id="puzzle-ui" class="hidden text-center mb-3 sm:mb-4 h-10 items-center justify-center">
                     <p class="text-slate-600 text-base sm:text-lg">Mix: 
                         <span id="target-colour-name" class="font-bold"></span>
                         <span id="target-colour-display" class="inline-block w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-slate-400 align-middle ml-2 shadow-md"></span>
                     </p>
+                    <p id="puzzle-timer" class="text-sm text-slate-500 ml-4"></p>
                 </div>
 
-                <!-- Mixing Area for Explore and Puzzle Modes -->
-                <div id="explore-puzzle-mixing-area" class="hidden mixing-pot-area mb-4 sm:mb-6 justify-around items-center p-2 sm:p-4"> 
+                <div id="explore-puzzle-mixing-area" class="hidden mixing-pot-area mb-4 sm:mb-6 flex justify-around items-center p-2 sm:p-4"> 
                     <div id="slot1" class="drop-slot w-20 h-20 sm:w-24 sm:h-24" data-color="empty"><span class="sr-only">Mixing Slot 1</span></div>
                     <div class="text-3xl sm:text-4xl font-bold text-sky-500 mx-1 sm:mx-2">+</div>
                     <div id="slot2" class="drop-slot w-20 h-20 sm:w-24 sm:h-24" data-color="empty"><span class="sr-only">Mixing Slot 2</span></div>
@@ -269,8 +218,7 @@
                     <div id="result-pot" class="result-pot w-24 h-24 sm:w-32 sm:h-32"><span id="result-pot-text" class="sr-only">Result</span></div>
                 </div>
 
-                <!-- Mixing Area for New Creative Mode -->
-                <div id="creative-mode-mixing-area" class="mb-4 sm:mb-6"> <!-- Default shown -->
+                <div id="creative-mode-mixing-area" class="mb-4 sm:mb-6"> 
                     <div id="creative-mixing-canvas" data-current-color-hex="#e2e8f0">Drag colours here!</div>
                 </div>
                 
@@ -290,35 +238,37 @@
     <script>
         // --- Game Configuration ---
         const C_RED = 'red'; const C_YELLOW = 'yellow'; const C_BLUE = 'blue';
-        const C_BLACK = 'black'; const C_WHITE = 'white'; 
         const C_ORANGE = 'orange'; const C_GREEN = 'green'; const C_PURPLE = 'purple';
-        const C_RED_ORANGE = 'red-orange'; const C_YELLOW_ORANGE = 'yellow-orange';
-        const C_YELLOW_GREEN = 'yellow-green'; const C_BLUE_GREEN = 'blue-green';
-        const C_BLUE_PURPLE = 'blue-purple'; const C_RED_PURPLE = 'red-purple';
+        const C_VERMILION = 'vermilion'; const C_AMBER = 'amber';      
+        const C_CHARTREUSE = 'chartreuse'; const C_TEAL = 'teal';          
+        const C_VIOLET = 'violet'; const C_MAGENTA = 'magenta';   
         const DEFAULT_CANVAS_COLOR = '#e2e8f0'; 
 
         const allGameColors = { 
             [C_RED]:    { name: 'Red', hex: '#FF0000', type: 'primary', id: C_RED },
             [C_YELLOW]: { name: 'Yellow', hex: '#FFFF00', type: 'primary', id: C_YELLOW },
             [C_BLUE]:   { name: 'Blue', hex: '#0000FF', type: 'primary', id: C_BLUE },
-            [C_BLACK]:  { name: 'Black', hex: '#000000', type: 'primary', id: C_BLACK },
-            [C_WHITE]:  { name: 'White', hex: '#FFFFFF', type: 'primary', id: C_WHITE },
             [C_ORANGE]: { name: 'Orange', hex: '#FFA500', type: 'secondary', id: C_ORANGE, recipe: [C_RED, C_YELLOW].sort() },
             [C_GREEN]:  { name: 'Green', hex: '#00DD00', type: 'secondary', id: C_GREEN, recipe: [C_YELLOW, C_BLUE].sort() },
             [C_PURPLE]: { name: 'Purple', hex: '#A020F0', type: 'secondary', id: C_PURPLE, recipe: [C_BLUE, C_RED].sort() },
-            [C_RED_ORANGE]:    { name: 'Red-Orange', hex: '#FF4500', type: 'tertiary', id: C_RED_ORANGE, recipe: [C_RED, C_ORANGE].sort() },
-            [C_YELLOW_ORANGE]: { name: 'Yellow-Orange', hex: '#FFD700', type: 'tertiary', id: C_YELLOW_ORANGE, recipe: [C_YELLOW, C_ORANGE].sort() },
-            [C_YELLOW_GREEN]:  { name: 'Lime Green', hex: '#ADFF2F', type: 'tertiary', id: C_YELLOW_GREEN, recipe: [C_YELLOW, C_GREEN].sort() },
-            [C_BLUE_GREEN]:    { name: 'Teal', hex: '#008080', type: 'tertiary', id: C_BLUE_GREEN, recipe: [C_BLUE, C_GREEN].sort() },
-            [C_BLUE_PURPLE]:   { name: 'Indigo', hex: '#4B0082', type: 'tertiary', id: C_BLUE_PURPLE, recipe: [C_BLUE, C_PURPLE].sort() },
-            [C_RED_PURPLE]:    { name: 'Magenta', hex: '#FF00FF', type: 'tertiary', id: C_RED_PURPLE, recipe: [C_RED, C_PURPLE].sort() },
+            [C_VERMILION]:  { name: 'Vermilion', hex: '#FF4500', type: 'tertiary', id: C_VERMILION, recipe: [C_RED, C_ORANGE].sort() },
+            [C_AMBER]:      { name: 'Amber', hex: '#FFBF00', type: 'tertiary', id: C_AMBER, recipe: [C_YELLOW, C_ORANGE].sort() },
+            [C_CHARTREUSE]: { name: 'Chartreuse', hex: '#7FFF00', type: 'tertiary', id: C_CHARTREUSE, recipe: [C_YELLOW, C_GREEN].sort() },
+            [C_TEAL]:       { name: 'Teal', hex: '#008080', type: 'tertiary', id: C_TEAL, recipe: [C_BLUE, C_GREEN].sort() },
+            [C_VIOLET]:     { name: 'Violet', hex: '#8A2BE2', type: 'tertiary', id: C_VIOLET, recipe: [C_BLUE, C_PURPLE].sort() }, 
+            [C_MAGENTA]:    { name: 'Magenta', hex: '#FF00FF', type: 'tertiary', id: C_MAGENTA, recipe: [C_RED, C_PURPLE].sort() },
         };
 
         // --- Game State ---
-        let unlockedColorIds = [C_RED, C_YELLOW, C_BLUE, C_BLACK, C_WHITE]; 
+        let unlockedColorIds = [C_RED, C_YELLOW, C_BLUE]; 
         let slot1Color = 'empty'; let slot2Color = 'empty';
         let currentMode = 'creative'; 
-        let puzzleState = { targetColorId: null, targetColorName: '' };
+        let puzzleState = { 
+            targetColorId: null, targetColorName: '', startTime: null, 
+            timerIntervalId: null, score: 0, bonusCompletionsInRow: 0
+        };
+        const POINTS_CORRECT = 10; const POINTS_BONUS = 5; const BONUS_TIME_LIMIT_MS = 5000;
+
         let draggedColorId = null;
         let britishEnglishVoice = null;
         let toneJsStarted = false;
@@ -327,9 +277,11 @@
         // --- DOM Elements ---
         let paletteGrid, slot1Div, slot2Div, resultPotDiv, resultPotText, messageArea,
             exploreModeBtn, puzzleModeBtn, creativeModeBtn, 
-            puzzleUi, targetColourDisplay, targetColourName,
+            puzzleUi, targetColourDisplay, targetColourName, puzzleTimerDisplay,
+            scoreArea, scoreValueDisplay,
             confettiCanvas, confettiCtx,
-            explorePuzzleMixingArea, creativeModeMixingArea, creativeMixingCanvas;
+            explorePuzzleMixingArea, creativeModeMixingArea, creativeMixingCanvas,
+            mainTitleElement;
 
         // --- Sound Effects (Tone.js) ---
         let dropSound, successSound, muckyMixSound, alreadyMadeSound, 
@@ -374,12 +326,10 @@
             } catch (error) { console.error("Error initializing Tone.js sounds:", error); }
         }
         
-        function playDropSound() { if (toneJsStarted && dropSound) dropSound.triggerAttackRelease('C5', '8n'); else console.log("Attempted to play drop sound; Tone.js not ready or sound not initialized.");}
-        function playSuccessSound() { 
-            if (toneJsStarted && successSound) { const now = Tone.now(); successSound.triggerAttackRelease(['C4', 'E4', 'G4', 'C5'], '8n', now); successSound.triggerAttackRelease(['E4', 'G4', 'C5', 'E5'], '8n', now + 0.2); } else console.log("Attempted to play success sound; Tone.js not ready or sound not initialized.");
-        }
-        function playAlreadyMadeSound() { if (toneJsStarted && alreadyMadeSound) alreadyMadeSound.triggerAttackRelease('A4', '4n'); else console.log("Attempted to play already made sound; Tone.js not ready or sound not initialized.");}
-        function playMuckyMixSound() { if (toneJsStarted && muckyMixSound) muckyMixSound.triggerAttackRelease('4n'); else console.log("Attempted to play mucky sound; Tone.js not ready or sound not initialized.");}
+        function playDropSound() { if (toneJsStarted && dropSound) dropSound.triggerAttackRelease('C5', '8n');}
+        function playSuccessSound() { if (toneJsStarted && successSound) { const now = Tone.now(); successSound.triggerAttackRelease(['C4', 'E4', 'G4', 'C5'], '8n', now); successSound.triggerAttackRelease(['E4', 'G4', 'C5', 'E5'], '8n', now + 0.2); }}
+        function playAlreadyMadeSound() { if (toneJsStarted && alreadyMadeSound) alreadyMadeSound.triggerAttackRelease('A4', '4n');}
+        function playMuckyMixSound() { if (toneJsStarted && muckyMixSound) muckyMixSound.triggerAttackRelease('4n');}
         
         function startBackgroundMusic() { 
             if (toneJsStarted && Tone.Transport.state !== 'started') {
@@ -413,8 +363,7 @@
                     } 
                     else { console.error("Tone.js library is not loaded or Tone.start is not available. typeof Tone is currently:", typeof Tone); tonejsLoadFailed = true; }
                 } catch (error) { console.error("Error starting Tone.js:", error); tonejsLoadFailed = true; }
-            }
-            loadVoices(); 
+            } loadVoices(); 
         }
 
         function loadVoices() { 
@@ -423,13 +372,12 @@
             if (voices.length === 0 && speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = () => { loadVoices(); speechSynthesis.onvoiceschanged = null;  }; return; }
             britishEnglishVoice = voices.find(voice => voice.lang === 'en-GB' && voice.name.toLowerCase().includes('female')) || voices.find(voice => voice.lang === 'en-GB') || voices.find(voice => voice.lang.startsWith('en-GB'));
             if (!britishEnglishVoice) { britishEnglishVoice = voices.find(voice => voice.lang.startsWith('en') && voice.name.toLowerCase().includes('female')) || voices.find(voice => voice.lang.startsWith('en')); }
-            console.log("Voices loaded. Selected British English voice:", britishEnglishVoice ? britishEnglishVoice.name : "Not found, using default.");
         }
         
-        function speakColorName(colorName) { 
-            if (!colorName || !gameFullyStarted) return; if (typeof speechSynthesis === 'undefined') return;
+        function speakMessage(message) { 
+            if (!message || !gameFullyStarted) return; if (typeof speechSynthesis === 'undefined') return;
             if (!britishEnglishVoice && speechSynthesis.getVoices().length > 0) { loadVoices(); } if (speechSynthesis.getVoices().length === 0) { console.warn("Speech synthesis voices not available."); return; }
-            const utterance = new SpeechSynthesisUtterance(colorName); if (britishEnglishVoice) utterance.voice = britishEnglishVoice; else utterance.lang = 'en-GB';
+            const utterance = new SpeechSynthesisUtterance(message); if (britishEnglishVoice) utterance.voice = britishEnglishVoice; else utterance.lang = 'en-GB';
             utterance.pitch = 1.1; utterance.rate = 0.9; speechSynthesis.speak(utterance);
         }
 
@@ -442,10 +390,33 @@
             if (!slotDiv) return; slotDiv.style.backgroundColor = '#cbd5e1'; slotDiv.classList.remove('filled');
             slotDiv.innerHTML = `<span class="sr-only">Mixing Slot ${slotDiv.id === 'slot1' ? '1' : '2'}</span>`;
         }
-        function hexToRgb(hex) { 
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+        
+        function hexToRgb(hex) {
+            if (typeof hex !== 'string') {
+                console.error("[hexToRgb] Received non-string input:", hex);
+                return null;
+            }
+            const trimmedHex = hex.trim();
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(trimmedHex);
+            if (!result) {
+                console.error("[hexToRgb] Regex did not match for trimmedHex:", `'${trimmedHex}'`);
+                return null;
+            }
+            try {
+                const r = parseInt(result[1], 16);
+                const g = parseInt(result[2], 16);
+                const b = parseInt(result[3], 16);
+                if (isNaN(r) || isNaN(g) || isNaN(b)) {
+                    console.error("[hexToRgb] parseInt resulted in NaN for one or more components.", result);
+                    return null;
+                }
+                return { r, g, b };
+            } catch (e) {
+                console.error("[hexToRgb] Error during parseInt:", e);
+                return null;
+            }
         }
+
         function rgbToHex(r, g, b) { 
             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
         }
@@ -471,11 +442,24 @@
         }
         
         function renderPalette() {  
-            if (!paletteGrid) return; paletteGrid.innerHTML = '';
+            console.log("renderPalette called. Current mode:", currentMode);
+            if (!paletteGrid) { console.error("paletteGrid is null in renderPalette"); return; }
+            paletteGrid.innerHTML = '';
             let colorsToDisplay = [];
-            if (currentMode === 'creative') { colorsToDisplay = Object.values(allGameColors); } 
-            else { colorsToDisplay = Object.values(allGameColors).filter(c => unlockedColorIds.includes(c.id) || c.type === 'primary');}
+            if (currentMode === 'creative') { 
+                colorsToDisplay = Object.values(allGameColors); 
+            } else { 
+                colorsToDisplay = Object.values(allGameColors).filter(c => unlockedColorIds.includes(c.id) || c.type === 'primary');
+            }
+            
             colorsToDisplay.sort((a,b) => { const typeOrder = { 'primary': 1, 'secondary': 2, 'tertiary': 3 }; if (typeOrder[a.type] !== typeOrder[b.type]) return typeOrder[a.type] - typeOrder[b.type]; return a.name.localeCompare(b.name); });
+            
+            if (colorsToDisplay.length === 0) {
+                console.warn("No colors to display in palette for mode:", currentMode);
+            } else {
+                 console.log(`Rendering ${colorsToDisplay.length} swatches for palette.`);
+            }
+
             colorsToDisplay.forEach(color => {
                 const swatch = document.createElement('div'); swatch.className = 'color-swatch-draggable w-16 h-16 sm:w-20 sm:h-20';
                 swatch.style.backgroundColor = color.hex;
@@ -490,86 +474,178 @@
         
         let touchDragElement = null; let touchOffsetX, touchOffsetY;
         function handleTouchStart(event) {  
-            if (!gameFullyStarted) return; event.preventDefault(); const swatch = event.currentTarget; draggedColorId = swatch.dataset.colorId;
-            touchDragElement = swatch.cloneNode(true); touchDragElement.style.position = 'absolute'; touchDragElement.style.opacity = '0.7'; touchDragElement.style.pointerEvents = 'none'; document.body.appendChild(touchDragElement);
-            const touch = event.touches[0]; const rect = swatch.getBoundingClientRect(); touchOffsetX = touch.clientX - rect.left; touchOffsetY = touch.clientY - rect.top;
+            if (!gameFullyStarted) return; 
+            event.preventDefault(); 
+            const swatch = event.currentTarget; 
+            draggedColorId = swatch.dataset.colorId;
+            console.log("Touch Start - Dragged Color ID:", draggedColorId); 
+            if (!draggedColorId) { console.warn("Touch Start: No color ID on dragged swatch"); return; }
+
+            touchDragElement = swatch.cloneNode(true); 
+            touchDragElement.style.position = 'absolute'; 
+            touchDragElement.style.opacity = '0.7'; 
+            touchDragElement.style.pointerEvents = 'none'; 
+            document.body.appendChild(touchDragElement);
+            
+            const touch = event.touches[0]; 
+            const rect = swatch.getBoundingClientRect(); 
+            touchOffsetX = touch.clientX - rect.left; 
+            touchOffsetY = touch.clientY - rect.top;
             moveTouchDragElement(touch.clientX, touch.clientY);
-            document.addEventListener('touchmove', handleTouchMove, { passive: false }); document.addEventListener('touchend', handleTouchEnd);
+            
+            document.addEventListener('touchmove', handleTouchMove, { passive: false }); 
+            document.addEventListener('touchend', handleTouchEnd);
         }
         function moveTouchDragElement(x, y) {  if (touchDragElement) { touchDragElement.style.left = (x - touchOffsetX) + 'px'; touchDragElement.style.top = (y - touchOffsetY) + 'px'; } }
+        
         function handleTouchMove(event) {  
-            if (!gameFullyStarted || !touchDragElement) return; event.preventDefault(); { const touch = event.touches[0]; moveTouchDragElement(touch.clientX, touch.clientY);
-            const dropTargets = (currentMode === 'creative') ? [creativeMixingCanvas] : [slot1Div, slot2Div];
-            dropTargets.forEach(target => { if(!target) return; const rect = target.getBoundingClientRect(); if (touch.clientX > rect.left && touch.clientX < rect.right && touch.clientY > rect.top && touch.clientY < rect.bottom) { target.classList.add('dragging-over'); } else { target.classList.remove('dragging-over'); } }); }
+            if (!gameFullyStarted || !touchDragElement) return; 
+            event.preventDefault(); 
+            const touch = event.touches[0]; 
+            moveTouchDragElement(touch.clientX, touch.clientY);
+            
+            const dropTargets = (currentMode === 'creative' && creativeMixingCanvas) ? [creativeMixingCanvas] : 
+                                (slot1Div && slot2Div ? [slot1Div, slot2Div] : []);
+            
+            dropTargets.forEach(target => { 
+                if(!target) return; 
+                const rect = target.getBoundingClientRect(); 
+                if (touch.clientX >= rect.left && touch.clientX <= rect.right && 
+                    touch.clientY >= rect.top && touch.clientY <= rect.bottom) { 
+                    target.classList.add('dragging-over'); 
+                } else { 
+                    target.classList.remove('dragging-over'); 
+                } 
+            }); 
         }
+
         function handleTouchEnd(event) {  
-             if (!gameFullyStarted || !touchDragElement) return; { const touch = event.changedTouches[0]; const dropTargetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-             let actualDropTarget = null;
-             if (dropTargetEl) {
-                if (currentMode === 'creative' && dropTargetEl.id === 'creative-mixing-canvas') { actualDropTarget = dropTargetEl; } 
-                else if ((currentMode === 'explore' || currentMode === 'puzzle') && (dropTargetEl.id === 'slot1' || dropTargetEl.id === 'slot2')) { actualDropTarget = dropTargetEl; }
+             if (!gameFullyStarted || !touchDragElement) return; 
+             const touch = event.changedTouches[0]; 
+             let droppedOnTarget = null;
+
+             const potentialDropTargets = (currentMode === 'creative' && creativeMixingCanvas) ? [creativeMixingCanvas] : 
+                                       (slot1Div && slot2Div ? [slot1Div, slot2Div] : []);
+
+            for (const target of potentialDropTargets) {
+                if (!target) continue;
+                const rect = target.getBoundingClientRect();
+                if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                    droppedOnTarget = target;
+                    break;
+                }
+            }
+             
+             if (droppedOnTarget && draggedColorId) { 
+                 handleDrop({ target: droppedOnTarget, colorId: draggedColorId }); 
              }
-             if (actualDropTarget) { handleDrop({ target: actualDropTarget, colorId: draggedColorId }); }
-             document.body.removeChild(touchDragElement); touchDragElement = null; }
-             draggedColorId = null; document.removeEventListener('touchmove', handleTouchMove); document.removeEventListener('touchend', handleTouchEnd);
-             const allDropTargets = [slot1Div, slot2Div, creativeMixingCanvas];
-             allDropTargets.forEach(target => {if(target) target.classList.remove('dragging-over')});
+             
+             if (document.body.contains(touchDragElement)) {
+                document.body.removeChild(touchDragElement); 
+             }
+             touchDragElement = null; 
+             document.removeEventListener('touchmove', handleTouchMove); 
+             document.removeEventListener('touchend', handleTouchEnd);
+             
+             const allDropTargetsForHighlight = [slot1Div, slot2Div, creativeMixingCanvas];
+             allDropTargetsForHighlight.forEach(target => {if(target) target.classList.remove('dragging-over')});
+             if (!droppedOnTarget) draggedColorId = null; 
         }
 
         function handleDragStart(event) {  
             if (!gameFullyStarted) { event.preventDefault(); return; }
-            draggedColorId = event.target.dataset.colorId; event.dataTransfer.setData('text/plain', draggedColorId); event.dataTransfer.effectAllowed = 'move';
+            draggedColorId = event.target.dataset.colorId; 
+            console.log("Drag Start - Dragged Color ID:", draggedColorId);
+            if (!draggedColorId) { console.warn("Drag Start: No color ID on dragged swatch"); event.preventDefault(); return; }
+            event.dataTransfer.setData('text/plain', draggedColorId); 
+            event.dataTransfer.effectAllowed = 'move';
         }
         function handleDragOver(event) {  if (!gameFullyStarted || !event.currentTarget) return; event.preventDefault(); event.dataTransfer.dropEffect = 'move'; event.currentTarget.classList.add('dragging-over');}
         function handleDragLeave(event) {  if (!gameFullyStarted || !event.currentTarget) return; event.currentTarget.classList.remove('dragging-over');}
 
         function handleDrop(eventOrData) {  
-            if (!gameFullyStarted) return; let targetEl, colorIdToDrop;
-            if (eventOrData.target && eventOrData.colorId) { targetEl = eventOrData.target; colorIdToDrop = eventOrData.colorId; } 
-            else { eventOrData.preventDefault(); targetEl = eventOrData.currentTarget; colorIdToDrop = eventOrData.dataTransfer.getData('text/plain'); }
-            if(!targetEl) return; targetEl.classList.remove('dragging-over'); if (!allGameColors[colorIdToDrop]) return;
+            if (!gameFullyStarted) return; 
+            let targetEl, colorIdToDrop;
+            if (eventOrData.target && eventOrData.colorId) { 
+                targetEl = eventOrData.target; 
+                colorIdToDrop = eventOrData.colorId; 
+            } else { 
+                eventOrData.preventDefault(); 
+                targetEl = eventOrData.currentTarget; 
+                colorIdToDrop = eventOrData.dataTransfer.getData('text/plain'); 
+            }
+            console.log("Handle Drop - Target ID:", targetEl ? targetEl.id : "null", "Color ID:", colorIdToDrop, "Current Mode:", currentMode);
+
+            if(!targetEl) { draggedColorId = null; console.log("Drop: No target element."); return; }
+            targetEl.classList.remove('dragging-over'); 
+            if (!allGameColors[colorIdToDrop]) { draggedColorId = null; console.log("Drop: Invalid color ID."); return;}
+
             playDropSound();
-            if (currentMode === 'creative' && targetEl.id === 'creative-mixing-canvas') { mixColorOntoCreativeCanvas(colorIdToDrop); } 
-            else if ((currentMode === 'explore' || currentMode === 'puzzle') && (targetEl.id === 'slot1' || targetEl.id === 'slot2')) {
+            if (currentMode === 'creative' && targetEl.id === 'creative-mixing-canvas') { 
+                console.log("Drop: Creative mode, calling mixColorOntoCreativeCanvas");
+                mixColorOntoCreativeCanvas(colorIdToDrop); 
+            } else if ((currentMode === 'explore' || currentMode === 'puzzle') && (targetEl.id === 'slot1' || targetEl.id === 'slot2')) {
+                console.log("Drop: Explore/Puzzle mode, setting slot color.");
                 targetEl.style.backgroundColor = allGameColors[colorIdToDrop].hex; targetEl.classList.add('filled');
                 targetEl.innerHTML = `<span class="sr-only">${allGameColors[colorIdToDrop].name}</span>`; targetEl.dataset.color = colorIdToDrop;
-                if (targetEl.id === 'slot1') slot1Color = colorIdToDrop; if (targetEl.id === 'slot2') slot2Color = colorIdToDrop;
-                if (slot1Color !== 'empty' && slot2Color !== 'empty') { setTimeout(handleMixColors, 100); }
+                if (targetEl.id === 'slot1') slot1Color = colorIdToDrop; 
+                if (targetEl.id === 'slot2') slot2Color = colorIdToDrop;
+                console.log("Drop: Slot1:", slot1Color, "Slot2:", slot2Color);
+                if (slot1Color !== 'empty' && slot2Color !== 'empty') { 
+                    console.log("Calling handleMixColors for Explore/Puzzle");
+                    setTimeout(handleMixColors, 100); 
+                }
+            } else {
+                console.log("Drop: No valid drop condition met.");
             }
+            draggedColorId = null; 
         }
         
         function mixColorOntoCreativeCanvas(droppedColorId) {  
-            if (!creativeMixingCanvas) return; const currentColorHex = creativeMixingCanvas.dataset.currentColorHex || DEFAULT_CANVAS_COLOR;
-            const newColorHex = allGameColors[droppedColorId].hex; const currentRgb = hexToRgb(currentColorHex); const newRgb = hexToRgb(newColorHex);
-            if (!currentRgb || !newRgb) { console.error("Error converting hex to RGB for creative mix"); return; }
+            if (!creativeMixingCanvas) { console.error("creativeMixingCanvas is null in mixColorOntoCreativeCanvas"); return; }
+            console.log("Mixing onto Creative Canvas. Dropped:", droppedColorId);
+            const currentColorHex = creativeMixingCanvas.dataset.currentColorHex || DEFAULT_CANVAS_COLOR;
+            const newColorHex = allGameColors[droppedColorId].hex; 
+            console.log("Creative Canvas - Current:", currentColorHex, "New:", newColorHex);
+            
+            const currentRgb = hexToRgb(currentColorHex); 
+            if (!currentRgb) {
+                console.error(`Error converting CURRENT hex to RGB for creative mix. Current Hex: '${currentColorHex}'`);
+                return; 
+            }
+            const newRgb = hexToRgb(newColorHex);
+            if (!newRgb) {
+                console.error(`Error converting NEW hex to RGB for creative mix. New Hex: '${newColorHex}' from colorId: ${droppedColorId}`);
+                return;
+            }
+            
             let mixedR, mixedG, mixedB;
             if (currentColorHex === DEFAULT_CANVAS_COLOR) { mixedR = newRgb.r; mixedG = newRgb.g; mixedB = newRgb.b; } 
             else { mixedR = Math.round((currentRgb.r + newRgb.r) / 2); mixedG = Math.round((currentRgb.g + newRgb.g) / 2); mixedB = Math.round((currentRgb.b + newRgb.b) / 2); }
             const finalMixedHex = rgbToHex(mixedR, mixedG, mixedB);
-            creativeMixingCanvas.style.backgroundColor = finalMixedHex; creativeMixingCanvas.dataset.currentColorHex = finalMixedHex; creativeMixingCanvas.textContent = ''; 
+            console.log("Creative Canvas - Mixed RGB:", {mixedR, mixedG, mixedB}, "Final Hex:", finalMixedHex);
+            creativeMixingCanvas.style.backgroundColor = finalMixedHex; 
+            creativeMixingCanvas.dataset.currentColorHex = finalMixedHex; 
+            creativeMixingCanvas.textContent = ''; 
             let closestColorName = "New Mix"; let minDiff = Infinity;
             for (const cId in allGameColors) { const knownRgb = hexToRgb(allGameColors[cId].hex); if (knownRgb) { const diff = Math.abs(knownRgb.r - mixedR) + Math.abs(knownRgb.g - mixedG) + Math.abs(knownRgb.b - mixedB); if (diff < minDiff && diff < 50) { minDiff = diff; closestColorName = allGameColors[cId].name; } } }
-            if (closestColorName !== "New Mix") { displayMessage(`You made ${closestColorName}!`, 'text-purple-500'); speakColorName(closestColorName); } 
+            if (closestColorName !== "New Mix") { displayMessage(`You made ${closestColorName}!`, 'text-purple-500'); speakMessage(closestColorName); } 
             else { displayMessage('A unique colour!', 'text-teal-500'); }
             playSuccessSound(); createConfetti(finalMixedHex);
         }
 
-        function displayMessage(text, textColorClass = 'text-pink-500', duration = 3000) {  
-            if (!messageArea) return; if (!gameFullyStarted && text !== "Click PLAY to start mixing colours!") return; 
-            messageArea.textContent = text; messageArea.className = `text-center text-lg sm:text-xl font-semibold h-8 mb-2 sm:mb-4 ${textColorClass} animate-popIn`;
-            setTimeout(() => { if(messageArea) messageArea.textContent = ''; if(messageArea) messageArea.classList.remove('animate-popIn', textColorClass); }, duration);
-        }
-
-        function highlightParentSwatches(color1Id, color2Id) {  
-            if (!paletteGrid) return; const swatches = paletteGrid.querySelectorAll('.color-swatch-draggable');
-            swatches.forEach(swatch => { if (swatch.dataset.colorId === color1Id || swatch.dataset.colorId === color2Id) { swatch.classList.add('parent-highlight'); setTimeout(() => { swatch.classList.remove('parent-highlight'); }, 1500); } });
-        }
-
+        function displayMessage(text, textColorClass = 'text-pink-500', duration = 3000) { /* ... (same as before) ... */ }
+        function highlightParentSwatches(color1Id, color2Id) { /* ... (same as before) ... */ }
         function handleMixColors() {  
+            console.log("handleMixColors called. Slot1:", slot1Color, "Slot2:", slot2Color);
             if (slot1Color === 'empty' || slot2Color === 'empty' || !resultPotDiv) return; 
-            const mixedRecipe = [slot1Color, slot2Color].sort(); let resultColorFound = null;
+            const mixedRecipe = [slot1Color, slot2Color].sort(); 
+            console.log("Mixed Recipe:", mixedRecipe);
+            let resultColorFound = null;
             for (const colorId in allGameColors) { const color = allGameColors[colorId]; if (color.recipe && arraysEqual(color.recipe, mixedRecipe)) { resultColorFound = color; break; } }
             let muckyColorHex = '#78716c'; if (slot1Color === slot2Color) { resultColorFound = allGameColors[slot1Color]; }
+            console.log("Result Color Found:", resultColorFound ? resultColorFound.name : "None (or mucky)");
             resultPotDiv.classList.add('active-mix');
             if (resultColorFound) {
                 resultPotDiv.style.backgroundColor = resultColorFound.hex; if(resultPotText) resultPotText.textContent = resultColorFound.name; 
@@ -578,26 +654,52 @@
                 if (!unlockedColorIds.includes(resultColorFound.id)) {
                     unlockedColorIds.push(resultColorFound.id); allGameColors[resultColorFound.id].justUnlocked = true;
                     highlightParentSwatches(slot1Color, slot2Color); renderPalette(); 
-                    displayMessage(`Yay! ${resultColorFound.name}!`, 'text-emerald-500'); speakColorName(resultColorFound.name); playSuccessSound(); 
+                    displayMessage(`Yay! ${resultColorFound.name}!`, 'text-emerald-500'); speakMessage(resultColorFound.name); playSuccessSound(); 
                     resultPotDiv.classList.add('animate-pulseGlow'); createConfetti(resultColorFound.hex);
                     setTimeout(() => {if(resultPotDiv) resultPotDiv.classList.remove('animate-pulseGlow')}, 1200);
-                } else { displayMessage(`${resultColorFound.name} again!`, 'text-sky-500'); speakColorName(resultColorFound.name); playAlreadyMadeSound(); }
-                if (currentMode === 'puzzle' && puzzleState.targetColorId === resultColorFound.id) { displayMessage(`Correct! You mixed ${resultColorFound.name}!`, 'text-purple-600', 4000); setTimeout(startNewPuzzleRound, 2000); }
+                } else { displayMessage(`${resultColorFound.name} again!`, 'text-sky-500'); speakMessage(resultColorFound.name); playAlreadyMadeSound(); }
+                if (currentMode === 'puzzle' && puzzleState.targetColorId === resultColorFound.id) {
+                    const timeTaken = Date.now() - puzzleState.startTime; let awardedPoints = POINTS_CORRECT; let message = `Correct! You mixed ${resultColorFound.name}!`;
+                    let pointsMessage = `${POINTS_CORRECT} points!`;
+                    if (timeTaken <= BONUS_TIME_LIMIT_MS) { 
+                        awardedPoints += POINTS_BONUS; 
+                        puzzleState.bonusCompletionsInRow++; 
+                        message += ` Bonus points!`;
+                        pointsMessage = `${awardedPoints} points! Bonus!`;
+                    } 
+                    else { puzzleState.bonusCompletionsInRow = 0; }
+                    puzzleState.score += awardedPoints; if(scoreValueDisplay) scoreValueDisplay.textContent = puzzleState.score;
+                    displayMessage(message, 'text-purple-600', 4000); 
+                    speakMessage(pointsMessage);
+                    if(puzzleState.timerIntervalId) clearInterval(puzzleState.timerIntervalId);
+                    setTimeout(startNewPuzzleRound, 2000); 
+                }
             } else { resultPotDiv.style.backgroundColor = muckyColorHex; if(resultPotText) resultPotText.textContent = 'Hmm?'; resultPotDiv.style.color = '#FFFFFF'; displayMessage('A new mix!', 'text-amber-600'); playMuckyMixSound(); }
             setTimeout(() => { slot1Color = 'empty'; slot2Color = 'empty'; if(slot1Div) slot1Div.dataset.color = 'empty'; if(slot2Div) slot2Div.dataset.color = 'empty'; clearSlotVisual(slot1Div); clearSlotVisual(slot2Div); if(resultPotDiv) resultPotDiv.classList.remove('active-mix'); }, 800);
         }
 
         function switchToMode(mode) { 
-            if (!gameFullyStarted) return;
+            if (!gameFullyStarted) { console.warn("switchToMode called before gameFullyStarted"); return; }
             currentMode = mode;
-            [exploreModeBtn, puzzleModeBtn, creativeModeBtn].forEach(btn => { if(btn) btn.classList.remove('active');});
+            console.log("Switching to mode:", currentMode); 
+            
+            if(exploreModeBtn) exploreModeBtn.classList.remove('active');
+            if(puzzleModeBtn) puzzleModeBtn.classList.remove('active');
+            if(creativeModeBtn) creativeModeBtn.classList.remove('active');
+            
+            if(scoreArea) scoreArea.classList.add('hidden');
+            if(puzzleTimerDisplay) puzzleTimerDisplay.textContent = '';
+            if(puzzleState.timerIntervalId) clearInterval(puzzleState.timerIntervalId);
+
+            if(explorePuzzleMixingArea) explorePuzzleMixingArea.classList.add('hidden');
+            if(creativeModeMixingArea) creativeModeMixingArea.classList.add('hidden');
+
 
             if (mode === 'creative') { 
                 if(creativeModeBtn) creativeModeBtn.classList.add('active');
-                if(explorePuzzleMixingArea) explorePuzzleMixingArea.classList.add('hidden');
                 if(creativeModeMixingArea) creativeModeMixingArea.classList.remove('hidden');
                 if(puzzleUi) puzzleUi.classList.add('hidden');
-                if(messageArea) messageArea.textContent = 'Drag colours to the canvas!';
+                if(messageArea) messageArea.textContent = ''; 
                 if(creativeMixingCanvas) {
                      creativeMixingCanvas.style.backgroundColor = DEFAULT_CANVAS_COLOR;
                      creativeMixingCanvas.dataset.currentColorHex = DEFAULT_CANVAS_COLOR;
@@ -609,7 +711,6 @@
                     explorePuzzleMixingArea.classList.remove('hidden');
                     explorePuzzleMixingArea.style.display = 'flex'; 
                 }
-                if(creativeModeMixingArea) creativeModeMixingArea.classList.add('hidden');
                 if(puzzleUi) puzzleUi.classList.add('hidden');
                 if(messageArea) messageArea.textContent = '';
             } else if (mode === 'puzzle') {
@@ -618,8 +719,9 @@
                      explorePuzzleMixingArea.classList.remove('hidden');
                      explorePuzzleMixingArea.style.display = 'flex';
                 }
-                if(creativeModeMixingArea) creativeModeMixingArea.classList.add('hidden');
                 if(puzzleUi) puzzleUi.classList.remove('hidden'); 
+                if(scoreArea) scoreArea.classList.remove('hidden');
+                if(scoreValueDisplay) scoreValueDisplay.textContent = puzzleState.score; 
                 startNewPuzzleRound();
             }
             renderPalette(); 
@@ -631,14 +733,51 @@
         }
 
         function startNewPuzzleRound() {  
-            if (!gameFullyStarted || !targetColourName || !targetColourDisplay) return; 
-            const discoverableColors = Object.values(allGameColors).filter(c => c.type === 'secondary' && c.recipe);
-            if (discoverableColors.length === 0) { displayMessage('Wow, you found all the puzzle colours!', 'text-green-600'); if(puzzleUi) puzzleUi.classList.add('hidden'); return; }
-            let potentialTargets = discoverableColors.filter(c => !unlockedColorIds.includes(c.id)); if (potentialTargets.length === 0) { potentialTargets = discoverableColors; }
-            const randomTarget = potentialTargets[Math.floor(Math.random() * potentialTargets.length)];
-            puzzleState.targetColorId = randomTarget.id; puzzleState.targetColorName = randomTarget.name;
-            targetColourName.textContent = randomTarget.name; targetColourDisplay.style.backgroundColor = randomTarget.hex;
-            displayMessage(`Mix ${randomTarget.name}!`, 'text-indigo-600'); speakColorName(`Mix ${randomTarget.name}`);
+            if (!gameFullyStarted || !targetColourName || !targetColourDisplay || !puzzleTimerDisplay || !puzzleUi) {
+                console.error("Puzzle UI elements not ready for new round. Elements:", {targetColourName, targetColourDisplay, puzzleTimerDisplay, puzzleUi});
+                 return; 
+            }
+            console.log("Starting new puzzle round.");
+            puzzleUi.classList.remove('hidden'); 
+            
+            let targetPool;
+            if (puzzleState.bonusCompletionsInRow >= 3) {
+                targetPool = Object.values(allGameColors).filter(c => c.type === 'tertiary' && c.recipe);
+                puzzleState.bonusCompletionsInRow = 0; 
+                displayMessage("Bonus! Mix a harder colour!", "text-cyan-500", 2500);
+            } else {
+                targetPool = Object.values(allGameColors).filter(c => c.type === 'secondary' && c.recipe);
+            }
+            if (targetPool.length === 0) { 
+                targetPool = Object.values(allGameColors).filter(c => c.recipe && c.type !== 'primary'); 
+                 if (targetPool.length === 0) { 
+                    displayMessage('Wow, you found all puzzle colours!', 'text-green-600'); 
+                    puzzleUi.classList.add('hidden'); return; 
+                }
+            }
+
+            const randomTarget = targetPool[Math.floor(Math.random() * targetPool.length)];
+            console.log("New Puzzle Target:", randomTarget.name);
+            puzzleState.targetColorId = randomTarget.id; 
+            puzzleState.targetColorName = randomTarget.name;
+            puzzleState.startTime = Date.now();
+
+            targetColourName.textContent = randomTarget.name; 
+            targetColourDisplay.style.backgroundColor = randomTarget.hex;
+            displayMessage(`Mix ${randomTarget.name}!`, 'text-indigo-600'); 
+            speakMessage(`Mix ${randomTarget.name}`);
+
+            if(puzzleState.timerIntervalId) clearInterval(puzzleState.timerIntervalId);
+            let timeLeft = BONUS_TIME_LIMIT_MS / 1000;
+            puzzleTimerDisplay.textContent = `Time: ${timeLeft}s`;
+            puzzleState.timerIntervalId = setInterval(() => {
+                timeLeft--;
+                puzzleTimerDisplay.textContent = `Time: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(puzzleState.timerIntervalId);
+                    puzzleTimerDisplay.textContent = "Time's Up!";
+                }
+            }, 1000);
         }
         
         function assignElementVariables() {  
@@ -648,50 +787,155 @@
             puzzleModeBtn = document.getElementById('puzzle-mode-btn'); 
             creativeModeBtn = document.getElementById('creative-mode-btn');
             puzzleUi = document.getElementById('puzzle-ui'); targetColourDisplay = document.getElementById('target-colour-display'); targetColourName = document.getElementById('target-colour-name');
+            puzzleTimerDisplay = document.getElementById('puzzle-timer');
+            scoreArea = document.getElementById('score-area'); scoreValueDisplay = document.getElementById('score-value');
             confettiCanvas = document.getElementById('confetti-canvas'); if (confettiCanvas) confettiCtx = confettiCanvas.getContext('2d');
             explorePuzzleMixingArea = document.getElementById('explore-puzzle-mixing-area'); 
             creativeModeMixingArea = document.getElementById('creative-mode-mixing-area'); 
             creativeMixingCanvas = document.getElementById('creative-mixing-canvas'); 
+            mainTitleElement = document.getElementById('main-title');
+            console.log("DOM elements assigned:", {paletteGrid, creativeModeBtn, exploreModeBtn, puzzleModeBtn, explorePuzzleMixingArea, creativeModeMixingArea, mainTitleElement }); 
         }
 
         function setupGameInteractions() {  
-            if(exploreModeBtn) exploreModeBtn.addEventListener('click', () => switchToMode('explore'));
-            if(puzzleModeBtn) puzzleModeBtn.addEventListener('click', () => switchToMode('puzzle'));
-            if(creativeModeBtn) creativeModeBtn.addEventListener('click', () => switchToMode('creative'));
+            console.log("Setting up game interactions...");
+            if(creativeModeBtn) creativeModeBtn.addEventListener('click', () => switchToMode('creative')); else console.warn("creativeModeBtn not found for listener");
+            if(exploreModeBtn) exploreModeBtn.addEventListener('click', () => switchToMode('explore')); else console.warn("exploreModeBtn not found for listener");
+            if(puzzleModeBtn) puzzleModeBtn.addEventListener('click', () => switchToMode('puzzle')); else console.warn("puzzleModeBtn not found for listener");
             
             [slot1Div, slot2Div].forEach(slot => { if(slot) { slot.addEventListener('dragover', handleDragOver); slot.addEventListener('dragleave', handleDragLeave); slot.addEventListener('drop', handleDrop); } });
             if(creativeMixingCanvas) { creativeMixingCanvas.addEventListener('dragover', handleDragOver); creativeMixingCanvas.addEventListener('dragleave', handleDragLeave); creativeMixingCanvas.addEventListener('drop', handleDrop); }
+            console.log("Game interactions set up."); 
         }
         
+        function requestAppFullScreen() { /* ... (same as before) ... */ }
+        const titleColors = ['#FF6347', '#FFA500', '#FFFF00', '#32CD32', '#1E90FF', '#EE82EE', '#FF00FF'];
+        let titleColorIndex = 0;
+        let titleAnimationIntervalId = null; 
+        function animateGameTitle() { 
+            if (!mainTitleElement || !gameFullyStarted) {
+                return;
+            }
+            const text = "ColourCraft"; 
+            mainTitleElement.innerHTML = ''; 
+            for (let i = 0; i < text.length; i++) {
+                const span = document.createElement('span');
+                span.textContent = text[i];
+                span.style.color = titleColors[(titleColorIndex + i) % titleColors.length];
+                mainTitleElement.appendChild(span);
+            }
+            titleColorIndex = (titleColorIndex + 1) % titleColors.length;
+        }
+
         async function handlePlayButtonClick() {  
-            const playOverlayEl = document.getElementById('play-overlay'); const gameContentEl = document.getElementById('game-content');
-            if(playOverlayEl) playOverlayEl.style.display = 'none'; if(gameContentEl) gameContentEl.classList.remove('hidden-by-overlay');
+            console.log("Play button clicked! - Inside handlePlayButtonClick"); 
+            const playOverlayEl = document.getElementById('play-overlay'); 
+            const gameContentEl = document.getElementById('game-content-wrapper'); 
+            
+            if(playOverlayEl) playOverlayEl.style.display = 'none'; 
+            if(gameContentEl) gameContentEl.classList.remove('hidden-by-overlay');
             document.body.classList.add('game-active'); 
+            
             await startAudioSystems(); 
+            
             if (tonejsLoadFailed) { console.warn("Proceeding without Tone.js sounds due to load/start failure."); } 
             else { startBackgroundMusic(); } 
-            gameFullyStarted = true; assignElementVariables(); 
-            renderPalette(); setupGameInteractions(); switchToMode('creative'); 
-            setupConfettiCanvas(); window.addEventListener('resize', setupConfettiCanvas); 
-            clearSlotVisual(slot1Div); clearSlotVisual(slot2Div);
-            displayMessage("Let's mix some colours!", "text-sky-600", 4000);
+            
+            // Defer DOM-dependent setup until after browser has a chance to render the revealed content
+            requestAnimationFrame(() => {
+                gameFullyStarted = true; 
+                assignElementVariables(); 
+                
+                if (!mainTitleElement) { 
+                     console.error("Main title element NOT found after assigning variables!");
+                } else {
+                    console.log("Main title element found:", mainTitleElement);
+                     if (!titleAnimationIntervalId) { 
+                        animateGameTitle(); 
+                        titleAnimationIntervalId = setInterval(animateGameTitle, 700); 
+                        console.log("Title animation started.");
+                    }
+                }
+                
+                renderPalette(); 
+                setupGameInteractions(); 
+                switchToMode('creative'); 
+                setupConfettiCanvas(); 
+                window.addEventListener('resize', setupConfettiCanvas); 
+                clearSlotVisual(slot1Div); clearSlotVisual(slot2Div);
+                displayMessage("", "text-sky-600", 100); 
+                
+                try {
+                    requestAppFullScreen();
+                } catch (e) {
+                    console.warn("Could not enter fullscreen mode on play button click:", e);
+                }
+            });
         }
 
         let initAttempts = 0;
         const maxInitAttempts = 50; 
+        let playButtonListenerAttached = false; 
 
         function attemptPageSetup() {  
-            initAttempts++; const playButtonEl = document.getElementById('play-button'); const playOverlayTitleEl = document.getElementById('play-overlay-title');
-            if (tonejsLoadFailed) { console.error("Tone.js script load failed. Aborting sound setup."); if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Sound Library Error!"; if(playButtonEl) { playButtonEl.textContent = "Play (No Sound)"; playButtonEl.disabled = false; playButtonEl.addEventListener('click', handlePlayButtonClick); } return;  }
-            const toneIsReady = typeof Tone !== 'undefined' && Tone.start;
-            if (toneIsReady && playButtonEl) { console.log("Tone.js and Play Button are ready. Initializing page."); playButtonEl.addEventListener('click', handlePlayButtonClick); playButtonEl.disabled = false;  if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Get Ready to Mix!"; } 
-            else if (initAttempts < maxInitAttempts) { console.log(`Tone.js or Play Button not yet ready (attempt ${initAttempts}/${maxInitAttempts}). Retrying in 100ms... Tone ready: ${toneIsReady}, playButton found: ${!!playButtonEl}, typeof Tone: ${typeof Tone}`); setTimeout(attemptPageSetup, 100); } 
-            else { console.error(`Failed to initialize Tone.js or find Play Button after multiple attempts. typeof Tone: ${typeof Tone}, playButton found: ${!!playButtonEl}`); if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Sound Error!"; if(playButtonEl) { playButtonEl.textContent = "Play (No Sound)"; playButtonEl.disabled = false; playButtonEl.addEventListener('click', handlePlayButtonClick); console.warn("Game will start without sounds if Play is clicked."); } tonejsLoadFailed = true;  }
-        }
+            initAttempts++; 
+            const playButtonEl = document.getElementById('play-button'); 
+            const playOverlayTitleEl = document.getElementById('play-overlay-title');
+            
+            console.log(`Attempting page setup: ${initAttempts}. playButtonEl: ${!!playButtonEl}`);
 
+            if (playButtonEl && !playButtonListenerAttached) {
+                playButtonEl.addEventListener('click', handlePlayButtonClick);
+                playButtonListenerAttached = true;
+                console.log("Play button event listener attached.");
+            } else if (!playButtonEl && initAttempts < maxInitAttempts) {
+                 console.log("Play button not found yet. Retrying...");
+                 setTimeout(attemptPageSetup, 100);
+                 return; 
+            } else if (!playButtonEl) {
+                console.error("Play button was NOT found after multiple attempts. Cannot proceed.");
+                if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Button Error!";
+                return;
+            }
+
+            if (tonejsLoadFailed) { 
+                console.error("Tone.js script load failed. Enabling play button without sound."); 
+                if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Sound Library Error!"; 
+                if(playButtonEl) { 
+                    playButtonEl.textContent = "Play (No Sound)"; 
+                    playButtonEl.disabled = false; 
+                } return;  
+            }
+
+            const toneIsReady = typeof Tone !== 'undefined' && Tone.start;
+
+            if (toneIsReady) { 
+                console.log("Tone.js is ready. Enabling play button."); 
+                if(playButtonEl) playButtonEl.disabled = false;  
+                if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Get Ready to Mix!"; 
+            } else if (initAttempts < maxInitAttempts) { 
+                console.log(`Tone.js not yet ready (attempt ${initAttempts}/${maxInitAttempts}). Retrying in 100ms...`); 
+                setTimeout(attemptPageSetup, 100); 
+            } else { 
+                console.error(`Failed to initialize Tone.js after multiple attempts. Enabling play button without sound.`); 
+                if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Sound Error!"; 
+                if(playButtonEl) { 
+                    playButtonEl.textContent = "Play (No Sound)"; 
+                    playButtonEl.disabled = false; 
+                } 
+                tonejsLoadFailed = true;  
+            }
+        }
         window.addEventListener('load', () => {  
-            console.log("Window loaded. Attempting page setup."); loadVoices(); 
-            const playButtonEl = document.getElementById('play-button'); if(playButtonEl) playButtonEl.disabled = true; 
+            console.log("Window loaded. Starting page setup."); 
+            loadVoices(); 
+            const playButtonEl = document.getElementById('play-button'); 
+            if(playButtonEl) {
+                console.log("Play button found on load, disabling initially.");
+                playButtonEl.disabled = true; 
+            } else {
+                console.error("Play button NOT found on window load!");
+            }
             attemptPageSetup();
         });
     </script>
