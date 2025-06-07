@@ -102,7 +102,7 @@
 
         .game-area-card {
             background-color: #ffffff; border-radius: 24px; 
-            padding: 1rem; 
+            padding: 1rem;
             box-shadow: 0 10px 20px rgba(125, 211, 252, 0.3), 0 6px 6px rgba(125, 211, 252, 0.2); 
         }
         
@@ -111,7 +111,7 @@
         }
 
         #creative-mixing-canvas {
-            width: 100%; max-width: 220px; height: 220px;    
+            width: 100%; max-width: 190px; height: 190px;    
             margin: 0.5rem auto; background-color: #e2e8f0; 
             border-radius: 24px; box-shadow: inset 0 4px 8px rgba(0,0,0,0.15);
             cursor: crosshair; border: 4px solid white;
@@ -147,9 +147,7 @@
         .palette-container { background-color: #e0f2fe; border-radius: 16px; padding: 1rem; }
         .palette-title { font-family: 'Fredoka One', cursive; color: #0369a1; }
         #palette-grid { 
-            justify-items: center; 
-            max-height: 200px; 
-            overflow-y: auto;  
+            justify-items: center;
         }
         #palette-grid::-webkit-scrollbar { width: 8px; }
         #palette-grid::-webkit-scrollbar-track { background: #e0f2fe; border-radius: 4px; }
@@ -161,9 +159,9 @@
         @keyframes pulseGlow { /* ... (same) ... */ } .animate-pulseGlow { animation: pulseGlow 1.2s ease-in-out; }
         .dragging-over { transform: scale(1.1); border-color: #fbbf24 !important; box-shadow: inset 0 0 10px #fbbf24, 0 0 10px #fbbf24 !important; }
         
-        #game-content-wrapper {
+        /* #game-content-wrapper {
             padding-top: 1rem; 
-        }
+        } */
         .hidden-by-overlay { display: none !important; }
         .hidden { display: none !important; } 
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
@@ -218,7 +216,7 @@
                     <div id="result-pot" class="result-pot w-24 h-24 sm:w-32 sm:h-32"><span id="result-pot-text" class="sr-only">Result</span></div>
                 </div>
 
-                <div id="creative-mode-mixing-area" class="mb-4 sm:mb-6"> 
+                <div id="creative-mode-mixing-area" class="sm:mb-6"> 
                     <div id="creative-mixing-canvas" data-current-color-hex="#e2e8f0">Drag colours here!</div>
                 </div>
                 
