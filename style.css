@@ -92,6 +92,8 @@ body {
 
 /* NEW: Animated Rainbow Text Class */
 .rainbow-text-animated {
+    font-family: 'Playpen Sans', cursive; /* New font */
+    font-weight: 800; /* New weight */
     display: inline-block; /* Helps with background-clip: text */
     background: linear-gradient(120deg, #fd8800, #fd008f, #9700fd, #003dfd, #05c7e6, #4bd58d, #fd8800);
     background-size: 300% 300%; /* Adjust for desired animation speed/look */
