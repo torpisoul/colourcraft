@@ -19,30 +19,59 @@ body {
 
 #play-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(14, 165, 233, 0.8);
+    /* background-color: rgba(14, 165, 233, 0.8); */ /* Replaced by rainbow gradient */
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 1000; backdrop-filter: blur(5px);
+    z-index: 1000; 
+    /* backdrop-filter: blur(5px); /* Optional: blur can look odd with a full gradient background */
+    
+    /* Apply the rainbow gradient to the overlay */
+    background: linear-gradient(238deg, #fd8800, #fd008f, #9700fd, #003dfd, #05c7e6, #4bd58d);
+    background-size: 1200% 1200%; /* Make the gradient larger than the viewport */
+    animation: rainbow 30s ease infinite; /* Apply the animation */
+    
+    justify-content: space-evenly; /* Distribute elements vertically */
+    padding: 1rem 0; /* Add some vertical padding */
+    height: 100vh; /* Ensure it takes full viewport height */
+}
+
+#overlay-mascot {
+    max-height: 45vh; /* Adjust percentage as desired */
+    max-width: 85vw;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 1rem; /* Space below mascot */
 }
 
 #play-button {
-    font-family: 'Fredoka One', cursive; font-size: 3rem;
-    padding: 1.5rem 3rem;
-    background-image: linear-gradient(to right, #facc15 0%, #eab308 50%, #ca8a04 100%);
-    color: #78350f;
+    font-family: 'Fredoka One', cursive; 
+    font-size: clamp(2.5rem, 8vw, 4.5rem); /* Responsive font size */
+    padding: clamp(1rem, 3vh, 1.8rem) clamp(1.5rem, 6vw, 3.5rem); /* Responsive padding */
+    /* background-image: linear-gradient(to right, #facc15 0%, #eab308 50%, #ca8a04 100%); */ /* Replaced by rainbow */
+    color: white; /* For readability on rainbow */
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 3px rgba(0,0,0,0.4); /* Enhanced text shadow */
     border: none; border-radius: 24px;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.2), 0 0 0 5px white, 0 0 0 10px #fde047;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25), inset 0 0 0 3px rgba(255,255,255,0.5); /* Simplified shadow, added subtle inset border */
     cursor: pointer; transition: all 0.2s ease-in-out; transform: scale(1);
+    /* Rainbow button styles */
+    background: linear-gradient(120deg, #fd8800, #fd008f, #9700fd, #003dfd, #05c7e6, #4bd58d, #fd8800); /* Looping gradient */
+    background-size: 350% 350%; /* Controls the scale of the gradient for animation */
+    animation: rainbow 12s linear infinite; /* Reusing rainbow keyframes, adjust speed */
 }
-#play-button:hover { transform: scale(1.1); box-shadow: 0 12px 20px rgba(0,0,0,0.3), 0 0 0 5px white, 0 0 0 10px #fef08a; }
-#play-button:active { transform: scale(1.05); }
+#play-button:hover { transform: scale(1.05); box-shadow: 0 10px 18px rgba(0,0,0,0.3), inset 0 0 0 3px rgba(255,255,255,0.6); }
+#play-button:active { transform: scale(1.02); }
 #play-button:disabled {
     background-image: linear-gradient(to right, #a1a1aa 0%, #71717a 50%, #52525b 100%);
     color: #e4e4e7; cursor: not-allowed; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .play-overlay-title {
-    font-family: 'Fredoka One', cursive; color: white; font-size: 2.5rem;
-    text-shadow: 2px 2px 0px #0c4a6e; margin-bottom: 2rem;
+    font-family: 'Fredoka One', cursive; 
+    font-size: clamp(2rem, 6vw, 3rem); /* Responsive font size */
+    color: white; /* For "Get Ready To" and "!" parts */
+    text-shadow: 2px 2px 0px #0c4a6e, 0 0 10px rgba(0,0,0,0.3); 
+    margin-bottom: 1.5rem; /* Adjusted margin */
+    text-align: center; /* Ensure centering if text wraps */
 }
 
 #game-header {
@@ -57,23 +86,32 @@ body {
 
 .game-title {
     font-family: 'Fredoka One', cursive;
-    text-shadow: 2px 2px 0px #ffffff, 4px 4px 0px #7dd3fc;
+    /* text-shadow: 2px 2px 0px #ffffff, 4px 4px 0px #7dd3fc; */ /* Replaced by rainbow span */
     /* animation: pulseTitleShadow 2s infinite ease-in-out;  Alternative pulse */
 }
-.game-title span {
-    display: inline-block;
-    transition: color 0.3s ease-in-out, transform 0.2s ease-out;
-    animation: pulseLetter 2s infinite ease-in-out; /* Individual letter pulse */
+
+/* NEW: Animated Rainbow Text Class */
+.rainbow-text-animated {
+    display: inline-block; /* Helps with background-clip: text */
+    background: linear-gradient(120deg, #fd8800, #fd008f, #9700fd, #003dfd, #05c7e6, #4bd58d, #fd8800);
+    background-size: 300% 300%; /* Adjust for desired animation speed/look */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important; /* For Safari */
+    animation: rainbow 8s linear infinite; /* Slower than button, adjust as needed */
+
+    /* Create a white border using text-stroke */
+    -webkit-text-stroke: 1.5px white; /* Adjust thickness as needed */
+    /* Optional: Add a softer, darker shadow for depth, offset from the stroke */
+    text-shadow: 3px 3px 5px rgba(0,0,0,0.2); /* Adjust offset and blur for desired pop */
 }
- @keyframes pulseLetter { /* More subtle pulse for letters */
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% {  transform: translateY(-1px) scale(1.02); }
-}
+
 
 .fun-button {
     background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
-    color: white; border-radius: 9999px;
-    padding: 0.75rem 1.5rem; font-weight: 600;
+    color: white !important; /* !important used to override potential Tailwind specificity issues */
+    border-radius: 9999px; padding: 0.75rem 1.5rem; font-weight: 600;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
     transition: all 0.2s ease-in-out; border: 2px solid white;
 }
@@ -82,7 +120,7 @@ body {
     box-shadow: 0 8px 12px rgba(0,0,0,0.15), 0 4px 6px rgba(0,0,0,0.1);
 }
 .fun-button.active {
-    background-image: linear-gradient(to right, #fde047 0%, #facc15 50%, #eab308 100%);
+    background-image: linear-gradient(to right, #fde047 0%, #facc15 50%, #eab308 100%) !important; /* !important used to override potential Tailwind specificity issues */
     color: #713f12;
     box-shadow: inset 0 3px 5px rgba(0,0,0,0.25), 0 0 0 3px #fde047;
     transform: translateY(1px) scale(1.01);
@@ -154,8 +192,16 @@ body {
 #palette-grid::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
 #palette-grid::-webkit-scrollbar-thumb:hover { background: #2563eb; }
 
-@keyframes popIn { /* ... (same) ... */ } .animate-popIn { animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
-@keyframes pulseGlow { /* ... (same) ... */ } .animate-pulseGlow { animation: pulseGlow 1.2s ease-in-out; }
+/* Ensure these keyframes are fully defined */
+@keyframes popIn { 
+    0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+} 
+.animate-popIn { animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+@keyframes pulseGlow { 
+    0%, 100% { box-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+    50% { box-shadow: 0 0 15px currentColor, 0 0 25px currentColor; }
+} .animate-pulseGlow { animation: pulseGlow 1.2s ease-in-out; }
 .dragging-over { transform: scale(1.1); border-color: #fbbf24 !important; box-shadow: inset 0 0 10px #fbbf24, 0 0 10px #fbbf24 !important; }
 
 .hidden-by-overlay { display: none !important; }

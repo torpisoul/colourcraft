@@ -1,4 +1,4 @@
-// c:\Users\torpi\Documents\GitHub\colourcraft\script.js
+// script.js
 let tonejsLoadFailed = false;
 let toneJsStarted = false;
 let gameFullyStarted = false;
@@ -254,7 +254,7 @@ function highlightParentSwatches(color1Id, color2Id) {
             setTimeout(() => swatch.classList.remove('parent-highlight'), 2000);
         }
     });
-    console.log(`Highlighting parents: ${color1Id}, ${color2Id}`);
+    // console.log(`Highlighting parents: ${color1Id}, ${color2Id}`); // Optional: for debugging
 }
 
 function requestAppFullScreen() {
@@ -300,7 +300,7 @@ function animateConfetti() {
 function renderPalette() {
     console.log("renderPalette called. Current mode:", currentMode);
     if (!paletteGrid) { console.error("paletteGrid is null in renderPalette"); return; }
-    paletteGrid.innerHTML = '';
+    paletteGrid.innerHTML = ''; // Clear existing palette
     let colorsToDisplay = [];
     if (currentMode === 'creative') {
         colorsToDisplay = Object.values(allGameColors);
@@ -339,7 +339,7 @@ function handleTouchStart(event) {
     event.preventDefault();
     const swatch = event.currentTarget;
     draggedColorId = swatch.dataset.colorId;
-    console.log("Touch Start - Dragged Color ID:", draggedColorId);
+    // console.log("Touch Start - Dragged Color ID:", draggedColorId); // Optional: for debugging
     if (!draggedColorId) { console.warn("Touch Start: No color ID on dragged swatch"); return; }
 
     touchDragElement = swatch.cloneNode(true);
@@ -418,7 +418,7 @@ function handleTouchEnd(event) {
 function handleDragStart(event) {
     if (!gameFullyStarted) { event.preventDefault(); return; }
     draggedColorId = event.target.dataset.colorId;
-    console.log("Drag Start - Dragged Color ID:", draggedColorId);
+    // console.log("Drag Start - Dragged Color ID:", draggedColorId); // Optional: for debugging
     if (!draggedColorId) { console.warn("Drag Start: No color ID on dragged swatch"); event.preventDefault(); return; }
     event.dataTransfer.setData('text/plain', draggedColorId);
     event.dataTransfer.effectAllowed = 'move';
@@ -437,7 +437,7 @@ function handleDrop(eventOrData) {
         targetEl = eventOrData.currentTarget;
         colorIdToDrop = eventOrData.dataTransfer.getData('text/plain');
     }
-    console.log("Handle Drop - Target ID:", targetEl ? targetEl.id : "null", "Color ID:", colorIdToDrop, "Current Mode:", currentMode);
+    // console.log("Handle Drop - Target ID:", targetEl ? targetEl.id : "null", "Color ID:", colorIdToDrop, "Current Mode:", currentMode); // Optional: for debugging
 
     if(!targetEl) { draggedColorId = null; console.log("Drop: No target element."); return; }
     targetEl.classList.remove('dragging-over');
@@ -445,17 +445,17 @@ function handleDrop(eventOrData) {
 
     playDropSound();
     if (currentMode === 'creative' && targetEl.id === 'creative-mixing-canvas') {
-        console.log("Drop: Creative mode, calling mixColorOntoCreativeCanvas");
+        // console.log("Drop: Creative mode, calling mixColorOntoCreativeCanvas"); // Optional: for debugging
         mixColorOntoCreativeCanvas(colorIdToDrop);
     } else if ((currentMode === 'explore' || currentMode === 'puzzle') && (targetEl.id === 'slot1' || targetEl.id === 'slot2')) {
-        console.log("Drop: Explore/Puzzle mode, setting slot color.");
+        // console.log("Drop: Explore/Puzzle mode, setting slot color."); // Optional: for debugging
         targetEl.style.backgroundColor = allGameColors[colorIdToDrop].hex; targetEl.classList.add('filled');
         targetEl.innerHTML = `<span class="sr-only">${allGameColors[colorIdToDrop].name}</span>`; targetEl.dataset.color = colorIdToDrop;
         if (targetEl.id === 'slot1') slot1Color = colorIdToDrop;
         if (targetEl.id === 'slot2') slot2Color = colorIdToDrop;
-        console.log("Drop: Slot1:", slot1Color, "Slot2:", slot2Color);
+        // console.log("Drop: Slot1:", slot1Color, "Slot2:", slot2Color); // Optional: for debugging
         if (slot1Color !== 'empty' && slot2Color !== 'empty') {
-            console.log("Calling handleMixColors for Explore/Puzzle");
+            // console.log("Calling handleMixColors for Explore/Puzzle"); // Optional: for debugging
             setTimeout(handleMixColors, 100);
         }
     } else {
@@ -466,10 +466,10 @@ function handleDrop(eventOrData) {
 
 function mixColorOntoCreativeCanvas(droppedColorId) {
     if (!creativeMixingCanvas) { console.error("creativeMixingCanvas is null in mixColorOntoCreativeCanvas"); return; }
-    console.log("Mixing onto Creative Canvas. Dropped:", droppedColorId);
+    // console.log("Mixing onto Creative Canvas. Dropped:", droppedColorId); // Optional: for debugging
     const currentColorHex = creativeMixingCanvas.dataset.currentColorHex || DEFAULT_CANVAS_COLOR;
     const newColorHex = allGameColors[droppedColorId].hex;
-    console.log("Creative Canvas - Current:", currentColorHex, "New:", newColorHex);
+    // console.log("Creative Canvas - Current:", currentColorHex, "New:", newColorHex); // Optional: for debugging
 
     const currentRgb = hexToRgb(currentColorHex);
     if (!currentRgb) {
@@ -490,7 +490,7 @@ function mixColorOntoCreativeCanvas(droppedColorId) {
     if (currentColorHex === DEFAULT_CANVAS_COLOR) { mixedR = newRgb.r; mixedG = newRgb.g; mixedB = newRgb.b; }
     else { mixedR = Math.round((currentRgb.r + newRgb.r) / 2); mixedG = Math.round((currentRgb.g + newRgb.g) / 2); mixedB = Math.round((currentRgb.b + newRgb.b) / 2); }
     const finalMixedHex = rgbToHex(mixedR, mixedG, mixedB);
-    console.log("Creative Canvas - Mixed RGB:", {mixedR, mixedG, mixedB}, "Final Hex:", finalMixedHex);
+    // console.log("Creative Canvas - Mixed RGB:", {mixedR, mixedG, mixedB}, "Final Hex:", finalMixedHex); // Optional: for debugging
     creativeMixingCanvas.style.backgroundColor = finalMixedHex;
     creativeMixingCanvas.dataset.currentColorHex = finalMixedHex;
     creativeMixingCanvas.textContent = '';
@@ -502,14 +502,14 @@ function mixColorOntoCreativeCanvas(droppedColorId) {
 }
 
 function handleMixColors() {
-    console.log("handleMixColors called. Slot1:", slot1Color, "Slot2:", slot2Color);
+    // console.log("handleMixColors called. Slot1:", slot1Color, "Slot2:", slot2Color); // Optional: for debugging
     if (slot1Color === 'empty' || slot2Color === 'empty' || !resultPotDiv) return;
     const mixedRecipe = [slot1Color, slot2Color].sort();
-    console.log("Mixed Recipe:", mixedRecipe);
+    // console.log("Mixed Recipe:", mixedRecipe); // Optional: for debugging
     let resultColorFound = null;
     for (const colorId in allGameColors) { const color = allGameColors[colorId]; if (color.recipe && arraysEqual(color.recipe, mixedRecipe)) { resultColorFound = color; break; } }
     let muckyColorHex = '#78716c'; if (slot1Color === slot2Color) { resultColorFound = allGameColors[slot1Color]; }
-    console.log("Result Color Found:", resultColorFound ? resultColorFound.name : "None (or mucky)");
+    // console.log("Result Color Found:", resultColorFound ? resultColorFound.name : "None (or mucky)"); // Optional: for debugging
     resultPotDiv.classList.add('active-mix');
     if (resultColorFound) {
         resultPotDiv.style.backgroundColor = resultColorFound.hex; if(resultPotText) resultPotText.textContent = resultColorFound.name;
@@ -621,7 +621,7 @@ function startNewPuzzleRound() {
     }
 
     const randomTarget = targetPool[Math.floor(Math.random() * targetPool.length)];
-    console.log("New Puzzle Target:", randomTarget.name);
+    // console.log("New Puzzle Target:", randomTarget.name); // Optional: for debugging
     puzzleState.targetColorId = randomTarget.id;
     puzzleState.targetColorName = randomTarget.name;
     puzzleState.startTime = Date.now();
@@ -644,30 +644,12 @@ function startNewPuzzleRound() {
     }, 1000);
 }
 
-const titleColors = ['#FF6347', '#FFA500', '#FFFF00', '#32CD32', '#1E90FF', '#EE82EE', '#FF00FF'];
-let titleColorIndex = 0;
-let titleAnimationIntervalId = null;
-function animateGameTitle() {
-    if (!mainTitleElement || !gameFullyStarted) {
-        return;
-    }
-    const text = "ColourCraft";
-    mainTitleElement.innerHTML = '';
-    for (let i = 0; i < text.length; i++) {
-        const span = document.createElement('span');
-        span.textContent = text[i];
-        span.style.color = titleColors[(titleColorIndex + i) % titleColors.length];
-        mainTitleElement.appendChild(span);
-    }
-    titleColorIndex = (titleColorIndex + 1) % titleColors.length;
-}
-
 // --- Game Initialization and Start ---
 function assignElementVariables() {
     playButtonEl = document.getElementById('play-button');
     playOverlayEl = document.getElementById('play-overlay');
     gameContentEl = document.getElementById('game-content-wrapper');
-    playOverlayTitleEl = document.getElementById('play-overlay-title');
+    playOverlayTitleEl = document.getElementById('play-overlay-title'); // Still needed for hiding overlay
 
     paletteGrid = document.getElementById('palette-grid'); slot1Div = document.getElementById('slot1'); slot2Div = document.getElementById('slot2');
     resultPotDiv = document.getElementById('result-pot'); resultPotText = document.getElementById('result-pot-text'); messageArea = document.getElementById('message-area');
@@ -697,7 +679,7 @@ function setupGameInteractions() {
 }
 
 async function handlePlayButtonClick() {
-    console.log("Play button clicked!");
+    // console.log("Play button clicked!"); // Optional: for debugging
     if(playOverlayEl) playOverlayEl.style.display = 'none';
     if(gameContentEl) gameContentEl.classList.remove('hidden-by-overlay');
     document.body.classList.add('game-active');
@@ -717,23 +699,15 @@ async function handlePlayButtonClick() {
         // renderPalette(); // Called by switchToMode
         // setupGameInteractions(); // Already called in mainInit
 
-        if (!mainTitleElement) {
-             console.error("Main title element NOT found after assigning variables!");
-        } else {
-            console.log("Main title element found:", mainTitleElement);
-             if (!titleAnimationIntervalId) {
-                animateGameTitle();
-                titleAnimationIntervalId = setInterval(animateGameTitle, 700);
-                console.log("Title animation started.");
-            }
-        }
+        if (!mainTitleElement) console.error("Main title element NOT found after assigning variables!");
+        
         switchToMode('creative'); // Initial mode
         setupConfettiCanvas();
         window.addEventListener('resize', setupConfettiCanvas);
         clearSlotVisual(slot1Div); clearSlotVisual(slot2Div);
         displayMessage("Let's get mixing!", "text-sky-600", 2000); // Welcome message
 
-        try {
+        try { // Reinstate fullscreen attempt
             requestAppFullScreen();
         } catch (e) {
             console.warn("Could not enter fullscreen mode on play button click:", e);
@@ -744,7 +718,7 @@ async function handlePlayButtonClick() {
 
 async function mainInit() {
     console.log("DOM content loaded or window loaded. Starting main initialization.");
-    assignElementVariables();
+    assignElementVariables(); // Call at the very start
     loadVoices(); // Start loading voices early
 
     if (playButtonEl) {
@@ -752,10 +726,10 @@ async function mainInit() {
         console.log("Play button found and disabled.");
     } else {
         console.error("Play button NOT found on init!");
-        if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Error: Button Missing!";
+        // playOverlayTitleEl is static in HTML, no need to set error text here
         return; // Critical error
     }
-    if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Loading Sounds...";
+    if(playButtonEl) playButtonEl.textContent = "Loading Sounds..."; // Update button text
 
 
     try {
@@ -764,7 +738,7 @@ async function mainInit() {
         if (typeof Tone !== 'undefined' && Tone.start) {
             console.log("Tone object is defined. Tone.js ready.");
             // startAudioSystems will call Tone.start() when play is clicked
-            if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Get Ready to Mix!";
+            if(playButtonEl) playButtonEl.textContent = "PLAY!"; // Restore button text
             if(playButtonEl) playButtonEl.disabled = false;
         } else {
             throw new Error("Tone object not found after script load.");
@@ -772,9 +746,9 @@ async function mainInit() {
     } catch (error) {
         console.error("CRITICAL: Tone.js script failed to load or initialize!", error);
         tonejsLoadFailed = true;
-        if(playOverlayTitleEl) playOverlayTitleEl.textContent = "Sound Error!";
+        // playOverlayTitleEl is static, update button text for error
         if(playButtonEl) {
-            playButtonEl.textContent = "Play (No Sound)";
+            playButtonEl.textContent = "PLAY (No Sound)"; // Indicate no sound
             playButtonEl.disabled = false;
         }
     }
