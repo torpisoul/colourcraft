@@ -1,0 +1,203 @@
+/* c:\Users\torpi\Documents\GitHub\colourcraft\style.css */
+/* Animated Rainbow Gradient Keyframes */
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    overscroll-behavior: none;
+    background-color: #f0f9ff; /* Set a plain background for the body */
+    margin: 0; /* Remove default body margin */
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    display: flex; /* Helps with layout if your content isn't full height */
+    flex-direction: column; /* Stacks content vertically */
+    color: #374151;
+}
+
+#play-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(14, 165, 233, 0.8);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 1000; backdrop-filter: blur(5px);
+}
+
+#play-button {
+    font-family: 'Fredoka One', cursive; font-size: 3rem;
+    padding: 1.5rem 3rem;
+    background-image: linear-gradient(to right, #facc15 0%, #eab308 50%, #ca8a04 100%);
+    color: #78350f;
+    border: none; border-radius: 24px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2), 0 0 0 5px white, 0 0 0 10px #fde047;
+    cursor: pointer; transition: all 0.2s ease-in-out; transform: scale(1);
+}
+#play-button:hover { transform: scale(1.1); box-shadow: 0 12px 20px rgba(0,0,0,0.3), 0 0 0 5px white, 0 0 0 10px #fef08a; }
+#play-button:active { transform: scale(1.05); }
+#play-button:disabled {
+    background-image: linear-gradient(to right, #a1a1aa 0%, #71717a 50%, #52525b 100%);
+    color: #e4e4e7; cursor: not-allowed; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.play-overlay-title {
+    font-family: 'Fredoka One', cursive; color: white; font-size: 2.5rem;
+    text-shadow: 2px 2px 0px #0c4a6e; margin-bottom: 2rem;
+}
+
+#game-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: #f0f9ff;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.game-title {
+    font-family: 'Fredoka One', cursive;
+    text-shadow: 2px 2px 0px #ffffff, 4px 4px 0px #7dd3fc;
+    /* animation: pulseTitleShadow 2s infinite ease-in-out;  Alternative pulse */
+}
+.game-title span {
+    display: inline-block;
+    transition: color 0.3s ease-in-out, transform 0.2s ease-out;
+    animation: pulseLetter 2s infinite ease-in-out; /* Individual letter pulse */
+}
+ @keyframes pulseLetter { /* More subtle pulse for letters */
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% {  transform: translateY(-1px) scale(1.02); }
+}
+
+.fun-button {
+    background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+    color: white; border-radius: 9999px;
+    padding: 0.75rem 1.5rem; font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+    transition: all 0.2s ease-in-out; border: 2px solid white;
+}
+.fun-button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 12px rgba(0,0,0,0.15), 0 4px 6px rgba(0,0,0,0.1);
+}
+.fun-button.active {
+    background-image: linear-gradient(to right, #fde047 0%, #facc15 50%, #eab308 100%);
+    color: #713f12;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.25), 0 0 0 3px #fde047;
+    transform: translateY(1px) scale(1.01);
+}
+
+.game-area-card {
+    /* background-color: #ffffff; REMOVE this to allow gradient to show */
+    padding: 1rem;
+    border-radius: 24px;
+    box-shadow: 0 10px 20px rgba(125, 211, 252, 0.3), 0 6px 6px rgba(125, 211, 252, 0.2);
+    /* Apply the rainbow gradient here */
+    background: linear-gradient(238deg, #fd8800, #fd008f, #9700fd, #003dfd, #05c7e6, #4bd58d);
+    background-size: 1200% 1200%;
+    animation: rainbow 30s ease infinite;
+}
+
+.mixing-pot-area {
+    background-color: #e0f2fe; border-radius: 16px; padding: 1rem;
+}
+
+#creative-mixing-canvas {
+    width: 100%; max-width: 190px; height: 190px;
+    margin: 0.5rem auto; background-color: #e2e8f0;
+    border-radius: 24px; box-shadow: inset 0 4px 8px rgba(0,0,0,0.15);
+    cursor: crosshair; border: 4px solid white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.125rem; /* color: #64748b; */ /* Overridden below */ font-weight: 600;
+    /* Ensure initial text on creative canvas is readable on gradient */
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+ #creative-mixing-canvas.dragging-over {
+    box-shadow: inset 0 0 15px #fbbf24, 0 0 10px #fbbf24;
+}
+
+.drop-slot, .result-pot {
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: bold; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border: 4px solid white;
+}
+.drop-slot { background-color: #cbd5e1; }
+.drop-slot.filled { box-shadow: 0 0 10px currentColor, inset 0 2px 4px rgba(0,0,0,0.2); }
+
+.result-pot { background-color: #94a3b8; color: white; font-size: 1.125rem; }
+.result-pot.active-mix { transform: scale(1.1); }
+
+.color-swatch-draggable {
+    border-radius: 50%; cursor: grab;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 3px solid white;
+    font-weight: 600; font-size: 0.875rem; line-height: 1.25rem;
+    padding: 0.25rem; text-align: center;
+    display: flex; align-items: center; justify-content: center;
+}
+.color-swatch-draggable:active { cursor: grabbing; transform: scale(1.15); z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+.color-swatch-draggable.parent-highlight { box-shadow: 0 0 15px 5px #fde047, 0 0 0 3px #facc15; transform: scale(1.05); }
+
+.palette-container { background-color: #e0f2fe; border-radius: 16px; padding: 1rem; }
+.palette-title {
+    font-family: 'Fredoka One', cursive;
+    color: white; /* Adjusted for readability on gradient */
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Adjusted for readability on gradient */
+}
+#palette-grid {
+    justify-items: center;
+}
+#palette-grid::-webkit-scrollbar { width: 8px; }
+#palette-grid::-webkit-scrollbar-track { background: #e0f2fe; border-radius: 4px; }
+#palette-grid::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+#palette-grid::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+@keyframes popIn { /* ... (same) ... */ } .animate-popIn { animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+@keyframes pulseGlow { /* ... (same) ... */ } .animate-pulseGlow { animation: pulseGlow 1.2s ease-in-out; }
+.dragging-over { transform: scale(1.1); border-color: #fbbf24 !important; box-shadow: inset 0 0 10px #fbbf24, 0 0 10px #fbbf24 !important; }
+
+.hidden-by-overlay { display: none !important; }
+.hidden { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+
+#score-area {
+    font-family: 'Fredoka One', cursive;
+    color: white; /* Adjusted for readability on gradient */
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Adjusted for readability on gradient */
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+/* Ensure text within puzzle UI is readable on gradient */
+#puzzle-ui p,
+#puzzle-ui #target-colour-name,
+#puzzle-ui #puzzle-timer {
+    color: white !important; /* Override Tailwind text-slate-* classes */
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+#puzzle-timer {
+    text-align: center;
+}
+/* Ensure "+" and "=" signs in mixing area are readable on gradient */
+#explore-puzzle-mixing-area > div.text-sky-500 {
+    color: white !important; /* Override Tailwind text-sky-500 class */
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+/* Ensure message area text is readable on gradient, overriding dynamic JS color classes */
+#message-area {
+    color: white !important;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000 !important;
+}
+
+/* Adjusted styles for game-container */
+#game-container {
+    display: flex;
+    flex-direction: column; /* Ensure content stacks vertically within the container */
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Ensure it spans full width */
+}
