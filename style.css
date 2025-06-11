@@ -103,8 +103,6 @@ body {
     -webkit-text-fill-color: transparent !important; /* For Safari */
     animation: rainbow 8s linear infinite; /* Slower than button, adjust as needed */
 
-    /* Create a white border using text-stroke */
-    -webkit-text-stroke: 1.5px white; /* Adjust thickness as needed */
     /* Optional: Add a softer, darker shadow for depth, offset from the stroke */
     text-shadow: 3px 3px 5px rgba(0,0,0,0.2); /* Adjust offset and blur for desired pop */
 }
@@ -181,10 +179,20 @@ body {
 .color-swatch-draggable.parent-highlight { box-shadow: 0 0 15px 5px #fde047, 0 0 0 3px #facc15; transform: scale(1.05); }
 
 .palette-container { background-color: #e0f2fe; border-radius: 16px; padding: 1rem; }
+
+/* Apply rainbow gradient and white border to palette title */
 .palette-title {
     font-family: 'Fredoka One', cursive;
-    color: white; /* Adjusted for readability on gradient */
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Adjusted for readability on gradient */
+    font-size: clamp(1.75rem, 5vw, 2.5rem); /* Increased and responsive font size */
+    /* Apply rainbow gradient */
+    background: linear-gradient(120deg, #fd8800, #fd008f, #9700fd, #003dfd, #05c7e6, #4bd58d, #fd8800);
+    background-size: 300% 300%; /* Match animation size from rainbow-text-animated */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important; 
+    -webkit-text-fill-color: transparent !important; /* For Safari */
+    animation: rainbow 8s linear infinite; /* Apply animation */
+    text-shadow: 3px 3px 5px rgba(0,0,0,0.2); /* Optional dark shadow for depth */
 }
 #palette-grid {
     justify-items: center;
