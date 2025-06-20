@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>ColourCraft</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+    <link rel="mask-icon" href="assets/images/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;600;700&family=Playpen+Sans:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body> 
+
+    <div id="play-overlay">
+        <img src="assets/images/ColourCraft.png" alt="ColourCraft Mascot" id="overlay-mascot" class="mx-auto">
+        <h2 id="play-overlay-title" class="play-overlay-title">Get Ready To <span class="rainbow-text-animated">ColourCraft</span>!</h2>
+        <button id="play-button">PLAY!</button>
+    </div>
+    
+    <div id="game-content-wrapper" class="hidden-by-overlay">
+        <header id="game-header">
+            <!-- Container for title and side icons -->
+            <div class="flex items-center justify-center">
+                <img src="assets/images/favicon-32x32.png" alt="ColourCraft icon" class="h-8 w-8 sm:h-10 sm:w-10 mr-2 sm:mr-3">
+                <h1 id="main-title" class="game-title text-4xl sm:text-5xl font-bold"><span class="rainbow-text-animated">ColourCraft</span></h1>
+                <img src="assets/images/favicon-32x32.png" alt="ColourCraft icon" class="h-8 w-8 sm:h-10 sm:w-10 ml-2 sm:ml-3">
+            </div>
+            <div id="mode-selection" class="mt-2 mb-4 flex justify-center space-x-2 sm:space-x-4">
+                <button id="creative-mode-btn" class="fun-button active">Creative</button> 
+                <button id="explore-mode-btn" class="fun-button">Explore</button>
+                <button id="puzzle-mode-btn" class="fun-button">Puzzle</button>
+            </div>
+        </header>
+
+        <div id="game-container" class="flex flex-col items-center justify-center p-2 sm:p-4 select-none">
+            <div id="game-area" class="game-area-card w-full max-w-lg sm:max-w-xl md:max-w-2xl">
+                <div id="score-area" class="hidden">Score: <span id="score-value">0</span></div>
+                
+                <div id="puzzle-ui" class="hidden text-center mb-3 sm:mb-4 h-10 items-center justify-center">
+                    <p class="text-slate-600 text-base sm:text-lg">Mix: 
+                        <span id="target-colour-name" class="font-bold"></span>
+                        <span id="target-colour-display" class="inline-block w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-slate-400 align-middle ml-2 shadow-md"></span>
+                    </p>
+                    <p id="puzzle-timer" class="text-sm text-slate-500 ml-4"></p>
+                </div>
+
+                <div id="explore-puzzle-mixing-area" class="hidden mixing-pot-area mb-4 sm:mb-6 flex justify-around items-center p-2 sm:p-4"> 
+                    <div id="slot1" class="drop-slot w-20 h-20 sm:w-24 sm:h-24" data-color="empty"><span class="sr-only">Mixing Slot 1</span></div>
+                    <div class="text-3xl sm:text-4xl font-bold text-sky-500 mx-1 sm:mx-2">+</div>
+                    <div id="slot2" class="drop-slot w-20 h-20 sm:w-24 sm:h-24" data-color="empty"><span class="sr-only">Mixing Slot 2</span></div>
+                    <div class="text-3xl sm:text-4xl font-bold text-sky-500 mx-1 sm:mx-2">=</div>
+                    <div id="result-pot" class="result-pot w-24 h-24 sm:w-32 sm:h-32"><span id="result-pot-text" class="sr-only">Result</span></div>
+                </div>
+
+                <div id="creative-mode-mixing-area" class="sm:mb-6"> 
+                    <div id="creative-mixing-canvas" data-current-color-hex="#e2e8f0">Drag colours here!</div>
+                </div>
+                
+                <div id="message-area" class="text-center text-lg sm:text-xl font-semibold h-8 mb-2 sm:mb-4 text-pink-500">
+                </div>
+
+                <div id="colour-palette-container" class="palette-container">
+                    <h2 class="palette-title text-2xl sm:text-3xl font-bold text-center mb-3 sm:mb-4">Your Colours</h2>
+                    <div id="palette-grid" class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(5rem,1fr))]">
+                        </div>
+                </div>
+            </div>
+            <canvas id="confetti-canvas" class="absolute top-0 left-0 w-full h-full pointer-events-none z-50"></canvas>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

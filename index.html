@@ -2,79 +2,224 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>ColourCraft</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
-    <link rel="manifest" href="assets/images/site.webmanifest">
-    <link rel="mask-icon" href="assets/images/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;600;700&family=Playpen+Sans:wght@800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torpisoul Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-color: #1e1e1e;
+            --primary-color: #00bcd4; /* A nice cyan for highlights */
+            --text-color: #e0e0e0;
+            --text-muted: #8e8e8e;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --glow-color: rgba(0, 188, 212, 0.3);
+        }
 
-    <div id="play-overlay">
-        <img src="assets/images/ColourCraft.png" alt="ColourCraft Mascot" id="overlay-mascot" class="mx-auto">
-        <h2 id="play-overlay-title" class="play-overlay-title">Get Ready To <span class="rainbow-text-animated">ColourCraft</span>!</h2>
-        <button id="play-button">PLAY!</button>
-    </div>
-    
-    <div id="game-content-wrapper" class="hidden-by-overlay">
-        <header id="game-header">
-            <!-- Container for title and side icons -->
-            <div class="flex items-center justify-center">
-                <img src="assets/images/favicon-32x32.png" alt="ColourCraft icon" class="h-8 w-8 sm:h-10 sm:w-10 mr-2 sm:mr-3">
-                <h1 id="main-title" class="game-title text-4xl sm:text-5xl font-bold"><span class="rainbow-text-animated">ColourCraft</span></h1>
-                <img src="assets/images/favicon-32x32.png" alt="ColourCraft icon" class="h-8 w-8 sm:h-10 sm:w-10 ml-2 sm:ml-3">
-            </div>
-            <div id="mode-selection" class="mt-2 mb-4 flex justify-center space-x-2 sm:space-x-4">
-                <button id="creative-mode-btn" class="fun-button active">Creative</button> 
-                <button id="explore-mode-btn" class="fun-button">Explore</button>
-                <button id="puzzle-mode-btn" class="fun-button">Puzzle</button>
-            </div>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .header h1 .highlight {
+            color: var(--primary-color);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 1rem auto 0;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .game-card {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text-color);
+            box-shadow: 0 10px 20px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; /* For fade-in animation */
+            transform: translateY(20px);
+        }
+
+        .game-card.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px var(--shadow-color), 0 0 20px var(--glow-color);
+        }
+
+        .card-image-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .card-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .game-card:hover .card-image-container img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-content h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .card-content p {
+            color: var(--text-muted);
+            font-weight: 300;
+            margin: 0;
+            flex-grow: 1; /* Pushes the button to the bottom */
+        }
+
+        .play-button {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            text-align: center;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .game-card:hover .play-button {
+            background-color: #15f1ff;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1>Torpisoul <span class="highlight">Games</span></h1>
+            <p>A collection of interactive web games and experiments. Click on a project to play.</p>
         </header>
 
-        <div id="game-container" class="flex flex-col items-center justify-center p-2 sm:p-4 select-none">
-            <div id="game-area" class="game-area-card w-full max-w-lg sm:max-w-xl md:max-w-2xl">
-                <div id="score-area" class="hidden">Score: <span id="score-value">0</span></div>
+        <main>
+            <div class="games-grid">
+
+                <!-- Game Card 1: ColourCraft -->
+                <a href="./colourcraft/index.html" class="game-card">
+                    <div class="card-image-container">
+                        <img src="https://placehold.co/600x400/121212/00BCD4?text=ColourCraft" alt="ColourCraft Game Preview">
+                    </div>
+                    <div class="card-content">
+                        <h3>ColourCraft</h3>
+                        <p>A challenging color-matching puzzle game. Test your perception and speed.</p>
+                        <span class="play-button">Play Now</span>
+                    </div>
+                </a>
+
+                <!-- Game Card 2: Classify -->
+                <a href="./classify/index.html" class="game-card">
+                    <div class="card-image-container">
+                        <img src="https://placehold.co/600x400/121212/00BCD4?text=Classify" alt="Classify Game Preview">
+                    </div>
+                    <div class="card-content">
+                        <h3>Classify</h3>
+                        <p>A fast-paced image classification game. Beat the clock and climb the leaderboard.</p>
+                        <span class="play-button">Play Now</span>
+                    </div>
+                </a>
                 
-                <div id="puzzle-ui" class="hidden text-center mb-3 sm:mb-4 h-10 items-center justify-center">
-                    <p class="text-slate-600 text-base sm:text-lg">Mix: 
-                        <span id="target-colour-name" class="font-bold"></span>
-                        <span id="target-colour-display" class="inline-block w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-slate-400 align-middle ml-2 shadow-md"></span>
-                    </p>
-                    <p id="puzzle-timer" class="text-sm text-slate-500 ml-4"></p>
-                </div>
+                <!-- Add New Game Cards Here -->
+                <!-- 
+                <a href="#" class="game-card">
+                    <div class="card-image-container">
+                        <img src="https://placehold.co/600x400/121212/FFFFFF?text=Coming+Soon" alt="Coming Soon">
+                    </div>
+                    <div class="card-content">
+                        <h3>New Game</h3>
+                        <p>A description of your next amazing project will go right here.</p>
+                        <span class="play-button">Coming Soon</span>
+                    </div>
+                </a>
+                -->
 
-                <div id="explore-puzzle-mixing-area" class="hidden mixing-pot-area mb-4 sm:mb-6 flex justify-around items-center p-2 sm:p-4"> 
-                    <div id="slot1" class="drop-slot w-20 h-20 sm:w-24 sm:h-24" data-color="empty"><span class="sr-only">Mixing Slot 1</span></div>
-                    <div class="text-3xl sm:text-4xl font-bold text-sky-500 mx-1 sm:mx-2">+</div>
-                    <div id="slot2" class="drop-slot w-20 h-20 sm:w-24 sm:h-24" data-color="empty"><span class="sr-only">Mixing Slot 2</span></div>
-                    <div class="text-3xl sm:text-4xl font-bold text-sky-500 mx-1 sm:mx-2">=</div>
-                    <div id="result-pot" class="result-pot w-24 h-24 sm:w-32 sm:h-32"><span id="result-pot-text" class="sr-only">Result</span></div>
-                </div>
-
-                <div id="creative-mode-mixing-area" class="sm:mb-6"> 
-                    <div id="creative-mixing-canvas" data-current-color-hex="#e2e8f0">Drag colours here!</div>
-                </div>
-                
-                <div id="message-area" class="text-center text-lg sm:text-xl font-semibold h-8 mb-2 sm:mb-4 text-pink-500">
-                </div>
-
-                <div id="colour-palette-container" class="palette-container">
-                    <h2 class="palette-title text-2xl sm:text-3xl font-bold text-center mb-3 sm:mb-4">Your Colours</h2>
-                    <div id="palette-grid" class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(5rem,1fr))]">
-                        </div>
-                </div>
             </div>
-            <canvas id="confetti-canvas" class="absolute top-0 left-0 w-full h-full pointer-events-none z-50"></canvas>
-        </div>
+        </main>
     </div>
 
-    <script src="script.js" defer></script>
+    <footer class="footer">
+        <p>&copy; 2025 Torpisoul. All rights reserved. View the project on <a href="https://github.com/torpisoul" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+    </footer>
+
+    <script>
+        // Simple script for a staggered fade-in animation on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('loaded');
+                }, 150 * (index + 1));
+            });
+        });
+    </script>
+
 </body>
 </html>

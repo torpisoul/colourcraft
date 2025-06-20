@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classify - The Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="player-modal-backdrop" class="hidden">
+        <div id="player-modal">
+            <h2>Welcome to Classify!</h2>
+            <p>Please enter your name to play:</p>
+            <form id="player-form">
+                <input type="text" id="player-name-input" placeholder="Your Name" required maxlength="15">
+                <button type="submit">Let's Go!</button>
+            </form>
+        </div>
+    </div>
+
+    <header>
+        <h1>Classify</h1>
+        <div class="stats-container">
+            <div id="score-container">Score: <span id="score">0</span></div>
+            <div id="highscore-container">High Score: <span id="highscore">0</span></div>
+        </div>
+    </header>
+
+    <main>
+        <div id="game-container">
+            <div id="timer-container">
+                <div id="timer-bar"></div>
+            </div>
+            <div id="streak-counter" class="hidden">Streak x0</div>
+            <div id="image-display-container">
+                <img id="game-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Image to classify">
+            </div>
+            <div id="classification-options">
+                </div>
+        </div>
+
+        <div id="game-over-screen" class="hidden">
+            <h2>Time's Up!</h2>
+            <p id="final-score-text">Final Score: <span id="final-score">0</span></p>
+            <p id="new-highscore-message" class="hidden">🎉 New High Score! 🎉</p>
+            <div class="leaderboard">
+                <h3>Top 10 Players</h3>
+                <ol id="leaderboard-list">
+                    </ol>
+            </div>
+            <button id="restart-button">Play Again</button>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
